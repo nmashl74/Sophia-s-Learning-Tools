@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Word Builder</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+[hidden]{display:none!important}
+/* Layout: one "scene" at a time, like a storybook page, with a progress trail of stars on top */
+:root{
+  --bg:#F6F4FB; --card:#FFFFFF; --ink:#23263F; --muted:#5A5D7C; --line:#DCD7EC;
+  --accent:#8A3FA0; --accent-soft:#F1E4F6;
+  --contact:#D9622B; --contact-soft:#FDEBDD;
+  --gap:#3563C9; --gap-soft:#E3EBFB;
+  --good:#23824F; --good-soft:#DDF3E6; --try:#B4441A; --try-soft:#FDE8DD;
+  --star:#E9A800;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Lexend","Verdana",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --contact:#F29A68; --contact-soft:#3B2A22;
+  --gap:#8FB0F5; --gap-soft:#23304F;
+  --good:#6FD39B; --good-soft:#1F3A2C; --try:#F59E6B; --try-soft:#40281D;
+  --star:#FFC933; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --contact:#F29A68; --contact-soft:#3B2A22;
+  --gap:#8FB0F5; --gap-soft:#23304F;
+  --good:#6FD39B; --good-soft:#1F3A2C; --try:#F59E6B; --try-soft:#40281D;
+  --star:#FFC933; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.65;letter-spacing:.02em;word-spacing:.08em}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0;letter-spacing:.01em}
+h1{font-size:1.9rem}
+h2{font-size:1.6rem}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand small{display:block;font-size:.8rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.trail{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.trail li{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);font-family:var(--f-display);font-weight:600;color:var(--muted);background:var(--card)}
+.trail li.on{border-color:var(--accent);color:var(--accent)}
+.trail li.done{background:var(--star);border-color:var(--star);color:#3a2a00}
+
+.scene{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:24px 22px;display:grid;gap:20px}
+.scene-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px}
+.say-btn{border:2px solid var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:.9rem;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.say-btn[aria-pressed="true"]{background:var(--accent);color:var(--card)}
+
+.points{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.points li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--accent-soft)}
+.points .ico{font-size:1.5rem;line-height:1.2;flex:none}
+
+.kw{border:none;background:none;padding:0 2px;font-weight:600;color:var(--accent);text-decoration:underline dotted 2px;text-underline-offset:4px}
+.def{display:block;margin-top:6px;padding:8px 12px;border-left:4px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;font-size:.95rem}
+
+.mnemonic{border:2px dashed var(--accent);border-radius:16px;padding:14px 16px;display:grid;gap:8px}
+.mnemonic .letters{display:flex;flex-wrap:wrap;gap:10px}
+.mnemonic .letters span{font-family:var(--f-display);font-size:1.15rem}
+.mnemonic b{font-size:1.5rem;color:var(--accent)}
+
+.task{display:grid;gap:12px}
+.task-title{font-family:var(--f-display);font-size:1.25rem;font-weight:600;display:flex;gap:8px;align-items:center}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.qcard{border:2px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;background:var(--card);transition:border-color .2s,background .2s}
+.qcard .what{display:flex;gap:12px;align-items:center}
+.qcard .pic{font-size:2.2rem;line-height:1;flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:var(--bg)}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 14px;min-height:44px;font-weight:500}
+.choice:hover{border-color:var(--accent)}
+.qcard.right{border-color:var(--good);background:var(--good-soft)}
+.qcard.wrong{animation:wob .35s}
+.fb{font-size:.95rem;min-height:0}
+.fb.good{color:var(--good);font-weight:600}
+.fb.try{color:var(--try);font-weight:600}
+@keyframes wob{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* sorting baskets */
+.baskets{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.basket{border-radius:16px;padding:12px;min-height:110px;display:flex;flex-direction:column;gap:8px}
+.basket h3{font-size:1.1rem;display:flex;gap:6px;align-items:center}
+.basket p.hint{font-size:.85rem;color:var(--muted)}
+.basket.touch{background:var(--contact-soft);border:2px solid var(--contact)}
+.basket.gapb{background:var(--gap-soft);border:2px solid var(--gap)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border-radius:999px;padding:4px 12px;font-size:.9rem;font-weight:600;background:var(--card)}
+.touch .chip{border:2px solid var(--contact)}
+.gapb .chip{border:2px solid var(--gap)}
+.choice.c-touch{border-color:var(--contact)}
+.choice.c-gap{border-color:var(--gap)}
+@media (max-width:480px){.baskets{grid-template-columns:1fr}}
+
+/* force meter */
+.meter{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start}
+.meter svg{width:150px;height:auto;max-width:100%}
+.toys{display:grid;gap:8px}
+.toy{display:flex;gap:10px;align-items:center;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:8px 12px;min-height:52px}
+.toy[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.toy .e{font-size:1.7rem}
+.toy small{display:block;color:var(--muted);font-size:.85rem}
+.reading{font-family:var(--f-display);font-size:1.4rem;font-variant-numeric:tabular-nums}
+@media (max-width:480px){.meter{grid-template-columns:1fr;justify-items:center}.toys{width:100%}}
+
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
+.btn{border:none;border-radius:14px;padding:12px 22px;font-family:var(--f-display);font-size:1.15rem;font-weight:600;min-height:52px}
+.btn.next{background:var(--accent);color:var(--card)}
+.btn.back{background:transparent;border:2px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.locked-note{font-size:.9rem;color:var(--muted);text-align:right}
+
+.finish{text-align:center;display:grid;gap:16px;justify-items:center}
+.big-stars{font-size:2.6rem;letter-spacing:.2em}
+.wordbank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.wordbank span{background:var(--accent-soft);border-radius:999px;padding:6px 14px;font-weight:500}
+
+details.grownup{margin-top:24px;border-top:2px dashed var(--line);padding-top:14px;font-size:.9rem;color:var(--muted)}
+details.grownup summary{cursor:pointer;font-weight:600}
+details.grownup ul{padding-left:20px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* shared extras */
+.basket.ba{background:var(--contact-soft);border:2px solid var(--contact)}
+.basket.bb{background:var(--gap-soft);border:2px solid var(--gap)}
+.ba .chip{border:2px solid var(--contact)}
+.bb .chip{border:2px solid var(--gap)}
+.choice.c-a{border-color:var(--contact)}
+.choice.c-b{border-color:var(--gap)}
+.order-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.order-list li{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:12px;background:var(--good-soft)}
+.order-list .num{font-family:var(--f-display);font-weight:600;color:var(--good);min-width:1.4em}
+.steps-pool{display:grid;gap:8px}
+.steps-pool .choice{text-align:left}
+.think{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 14px 14px 0;padding:12px 14px}
+.home{display:inline-block;margin-bottom:10px;font-family:var(--f-display);font-weight:600;color:var(--accent);text-decoration:none}
+.figure{display:grid;justify-items:center;gap:6px}
+.figure svg{width:100%;max-width:360px;height:auto}
+.figure .cap{font-size:.9rem;color:var(--muted);text-align:center}
+:root{--skin:#F6E3D3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--skin:#4A3A35}}
+:root[data-theme="dark"]{--skin:#4A3A35}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.tiles{display:flex;flex-wrap:wrap;gap:8px}
+.tile{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 14px;min-height:44px;font-weight:600;text-align:left}
+.tile.sel{border-color:var(--accent);background:var(--accent-soft)}
+.tile.used{opacity:.35}
+/* labelling */
+.labelwrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+.labelart{width:100%;height:auto}
+.pin{cursor:pointer}
+.pin circle{fill:var(--accent);stroke:var(--card);stroke-width:3}
+.pin text{fill:var(--card);font:700 15px Fredoka,system-ui,sans-serif;pointer-events:none}
+.pin.sel circle{fill:var(--star);stroke:var(--ink)}
+.pin.sel text{fill:#3a2a00}
+.pin.ok circle{fill:var(--good)}
+.pin:focus-visible circle{stroke:var(--ink);stroke-width:4}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.legend li{display:flex;gap:8px;align-items:center;padding:6px 10px;border-radius:10px;background:var(--bg);min-height:38px}
+.legend li.ok{background:var(--good-soft)}
+.legend .ln{font-family:var(--f-display);font-weight:700;color:var(--accent);min-width:1.2em}
+.legend li.ok .ln{color:var(--good)}
+@media (max-width:520px){.labelwrap{grid-template-columns:1fr}.legend{grid-template-columns:1fr 1fr}}
+/* spelling */
+.steps-row{display:flex;flex-wrap:wrap;gap:6px;font-size:.85rem}
+.step{padding:3px 10px;border-radius:999px;background:var(--bg);color:var(--muted)}
+.step.on{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.chunks,.slots{display:flex;gap:6px;flex-wrap:wrap;font-family:var(--f-display);font-size:2rem;letter-spacing:.04em}
+.ch,.slot{padding:4px 12px;border-radius:12px}
+.slot{min-width:56px;min-height:52px;border:2px dashed var(--line)}
+.c0{background:#E3EBFB;color:#1E3F8A}.c1{background:#FDEBDD;color:#8A3A12}.c2{background:#DDF3E6;color:#1C5E3A}
+.spell .tile{font-family:var(--f-display);font-size:1.4rem;min-width:56px;text-align:center}
+.look,.build{display:grid;gap:12px}
+/* flip cards */
+.deckprog{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--star)}
+.fcard{width:100%;min-height:220px;border:3px solid var(--accent);border-radius:20px;background:var(--card);display:grid;place-items:center;padding:18px;text-align:center}
+.fcard.flip{background:var(--accent-soft)}
+.fcard.done{border-color:var(--good);background:var(--good-soft)}
+.face{display:grid;gap:10px;justify-items:center;font-size:1.1rem}
+.face b{font-family:var(--f-display);font-size:1.7rem}
+.face .big{font-size:3rem;line-height:1}
+.hintline{color:var(--muted);font-size:.9rem}
+/* pairs */
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (min-width:560px){.mgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.mcard{min-height:92px;border:2px solid var(--line);border-radius:14px;background:var(--accent);color:var(--card);display:grid;place-items:center;padding:6px;font-size:.95rem}
+.mcard .mback{font-size:1.8rem}
+.mcard.up{background:var(--card);color:var(--ink);border-color:var(--accent)}
+.mcard.done{background:var(--good-soft);border-color:var(--good);color:var(--ink)}
+.mcard svg{width:100%;max-width:90px;height:auto}
+.symlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;width:100%;color:var(--ink)}
+.symlist div{display:grid;justify-items:center;gap:4px;padding:8px;border-radius:12px;background:var(--bg)}
+.symlist svg{width:80px;height:50px}
+/* comic */
+.panel{display:flex;gap:12px;align-items:center}
+.pe{font-size:1.8rem;flex:none}
+.comicgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;width:100%;text-align:left}
+.comicgrid .panel,.order-list .panel{flex-direction:column;align-items:flex-start;border:3px solid var(--ink);border-radius:6px;padding:10px;background:var(--card)}
+.order-list li{background:transparent;padding:0}
+/* paragraph builder */
+.peah{font-size:1.1rem;margin-top:6px}
+.peah.p{color:var(--contact)}.peah.e{color:var(--gap)}.peah.a{color:var(--good)}
+.evlist{display:grid;gap:8px}
+textarea{width:100%;font:inherit;font-size:1rem;padding:10px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);box-sizing:border-box}
+textarea:focus-visible{outline:3px solid var(--accent)}
+.preview{padding:12px 14px;border-radius:14px;background:var(--bg);line-height:1.8}
+.pp{background:var(--contact-soft);border-bottom:3px solid var(--contact)}
+.pe2{background:var(--gap-soft);border-bottom:3px solid var(--gap)}
+.pa{background:var(--good-soft);border-bottom:3px solid var(--good)}
+.ph{color:var(--muted);font-style:italic}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="home" href="index.html">🏠 All my pages</a>
+  <header class="top">
+    <div class="brand"><div><small>Spelling · Biology words</small><h1>Word Builder</h1></div></div>
+    <ol class="trail" id="trail" aria-label="Progress"></ol>
+  </header>
+  <main id="stage"></main>
+  <div class="nav">
+    <button class="btn back" id="back" type="button">← Back</button>
+    <div style="display:grid;gap:4px;justify-items:end">
+      <button class="btn next" id="next" type="button">Next →</button>
+      <span class="locked-note" id="lockNote"></span>
+    </div>
+  </div>
+  <details class="grownup">
+    <summary>For grown-ups</summary>
+    <p>Spelling trainer using Look, Say, Cover, Build for eight organ words from 7Ab (heart, lungs, liver, bladder, kidneys, stomach, intestine, diaphragm). Words are split into colour-coded chunks; each has a memory tip. Distractor chunks are included so she has to listen and choose. Best used little and often.</p>
+  </details>
+</div>
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const kw=(w,label)=>`<button type="button" class="kw" data-kw="${w}">${label||w}</button>`;
+const esc=t=>String(t).replace(/"/g,'&quot;');
+function qcard(id,pic,text,opts,ans,hint,why){
+  return `<div class="qcard" data-id="${id}" data-ans="${ans}" data-hint="${esc(hint)}"${why?` data-why="${esc(why)}"`:""}>
+    <div class="what"><span class="pic" aria-hidden="true">${pic}</span><span>${text}</span></div>
+    <div class="choices">${opts.map(o=>`<button type="button" class="choice" data-v="${o[0]}">${o[1]}</button>`).join("")}</div>
+    <p class="fb" aria-live="polite"></p></div>`;
+}
+let BASKETS={a:{icon:"",label:""},b:{icon:"",label:""}};
+function baskets(a,b){
+  BASKETS={a,b};
+  return `<div class="baskets">
+    <div class="basket ba"><h3>${a.icon} ${a.label}</h3>${a.hint?`<p class="hint">${a.hint}</p>`:""}<div class="chips" id="bk-a"></div></div>
+    <div class="basket bb"><h3>${b.icon} ${b.label}</h3>${b.hint?`<p class="hint">${b.hint}</p>`:""}<div class="chips" id="bk-b"></div></div>
+  </div>`;
+}
+function sortCard(id,pic,chip,text,ans,hint){
+  return `<div class="qcard sort" data-id="${id}" data-ans="${ans}" data-chip="${esc(chip)}" data-hint="${esc(hint)}">
+    <div class="what"><span class="pic" aria-hidden="true">${pic}</span><span>${text}</span></div>
+    <div class="choices"><button type="button" class="choice c-a" data-v="a">${BASKETS.a.icon} ${BASKETS.a.short||BASKETS.a.label}</button><button type="button" class="choice c-b" data-v="b">${BASKETS.b.icon} ${BASKETS.b.short||BASKETS.b.label}</button></div>
+    <p class="fb" aria-live="polite"></p></div>`;
+}
+function orderTask(id,title){
+  return `<div class="task qcard order" data-id="${id}">
+    <div class="task-title">${title}</div>
+    <ol class="order-list"></ol><div class="steps-pool"></div><p class="fb" aria-live="polite"></p></div>`;
+}
+function initOrder(id,steps){
+  const card=stage.querySelector(`[data-id="${id}"]`), pool=card.querySelector(".steps-pool"), done=card.querySelector(".order-list"), fb=card.querySelector(".fb");
+  let next=0;
+  const sh=steps.map((s,i)=>[s,i]).sort(()=>Math.random()-.5);
+  if(sh[0][1]===0) sh.push(sh.shift());
+  pool.innerHTML=sh.map(([s,i])=>`<button type="button" class="choice ostep" data-i="${i}">${s[0]}</button>`).join("");
+  pool.addEventListener("click",e=>{
+    const b=e.target.closest(".ostep"); if(!b) return;
+    if(+b.dataset.i===next){
+      done.insertAdjacentHTML("beforeend",`<li><span class="num">${next+1}</span><span>${steps[next][0]}</span></li>`);
+      b.remove(); next++;
+      fb.className="fb good"; fb.textContent=next<steps.length?"✅ Yes! What comes next?":"✅ Perfect order! Great thinking.";
+      if(next===steps.length){card.classList.add("right");updateNext();}
+    }else{
+      card.classList.remove("wrong"); void card.offsetWidth; card.classList.add("wrong");
+      fb.className="fb try"; fb.textContent="Good try! Hint: "+steps[next][1];
+    }
+  });
+}
+const defs={};
+const hooks={};
+const WORDS=[
+ {w:"heart",e:"🫀",m:"Pumps blood around your body.",c:["h","ear","t"],x:["ar","ea"],tip:"There's an <b>ear</b> hiding in h<b>ear</b>t!"},
+ {w:"lungs",e:"🫁",m:"Fill with air when you breathe.",c:["l","ung","s"],x:["ong","z"],tip:"<b>ung</b> like in y<b>oung</b>… but no o! Just l-<b>ung</b>-s."},
+ {w:"liver",e:"🟤",m:"Makes and stores some substances.",c:["liv","er"],x:["iv","or"],tip:"<b>liv</b> + <b>er</b>, like a river with an L."},
+ {w:"bladder",e:"💧",m:"Stores urine (wee).",c:["blad","der"],x:["dar","bla"],tip:"Two <b>d</b>s in the middle: bla<b>dd</b>er."},
+ {w:"kidneys",e:"🫘",m:"Clean the blood. You have two.",c:["kid","neys"],x:["nees","nis"],tip:"A <b>kid</b> with <b>neys</b>. Ends in <b>-eys</b>, like keys!"},
+ {w:"stomach",e:"🍽️",m:"Breaks up your food.",c:["sto","mach"],x:["mak","stum"],tip:"The <b>ch</b> says “k”, like in s<b>ch</b>ool."},
+ {w:"intestine",e:"🌀",m:"A long tube that takes food into your blood.",c:["in","tes","tine"],x:["tin","tess"],tip:"Three beats: <b>in-tes-tine</b>. Clap it!"},
+ {w:"diaphragm",e:"🫧",m:"A muscle sheet under your lungs. Helps you breathe.",c:["di","a","phragm"],x:["fram","dy"],tip:"<b>ph</b> says “f”, and the <b>g</b> is silent: dia<b>phra(g)m</b>."}
+];
+let speakVoice=null;
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang));if(v)u.voice=v;u.lang="en-GB";u.rate=.75;speechSynthesis.speak(u);}catch(e){}}
+function spellCard(i){
+  const W=WORDS[i];
+  return `<div class="qcard spell" data-i="${i}">
+    <div class="what"><span class="pic" aria-hidden="true">${W.e}</span><span>${W.m}</span></div>
+    <div class="steps-row"><span class="step on">👀 Look</span><span class="step">🔊 Say</span><span class="step">🙈 Cover</span><span class="step">🧱 Build</span></div>
+    <div class="look"><div class="chunks">${W.c.map((c,k)=>`<span class="ch c${k%3}">${c}</span>`).join("")}</div>
+      <div class="row"><button type="button" class="choice hear">🔊 Hear it</button><button type="button" class="choice cover">🙈 Cover it and build</button></div></div>
+    <div class="build" hidden>
+      <div class="slots">${W.c.map(()=>`<span class="slot"></span>`).join("")}</div>
+      <div class="tiles">${[...W.c,...W.x].map(t=>[t,Math.random()]).sort((a,b)=>a[1]-b[1]).map(([t])=>`<button type="button" class="tile" data-t="${t}">${t}</button>`).join("")}</div>
+      <div class="row"><button type="button" class="choice hear">🔊 Hear it again</button><button type="button" class="choice peek">👀 Peek (3 seconds)</button></div>
+    </div>
+    <p class="fb" aria-live="polite"></p>
+  </div>`;
+}
+function initSpell(){
+  stage.querySelectorAll(".spell").forEach(card=>{
+    const W=WORDS[+card.dataset.i], fb=card.querySelector(".fb"), steps=card.querySelectorAll(".step");
+    let next=0;
+    card.addEventListener("click",e=>{
+      if(e.target.closest(".hear")){say(W.w+". "+W.c.join(", ")+". "+W.w);steps[1].classList.add("on");return;}
+      if(e.target.closest(".cover")){card.querySelector(".look").hidden=true;card.querySelector(".build").hidden=false;steps[2].classList.add("on");steps[3].classList.add("on");fb.className="fb";fb.textContent="Tap the pieces in order.";return;}
+      if(e.target.closest(".peek")){const lk=card.querySelector(".look");lk.hidden=false;lk.querySelector(".row").hidden=true;setTimeout(()=>{lk.hidden=true;lk.querySelector(".row").hidden=false;},3000);return;}
+      const t=e.target.closest(".tile:not(.used)"); if(!t||card.classList.contains("right")) return;
+      if(t.dataset.t===W.c[next]){
+        card.querySelectorAll(".slot")[next].textContent=t.dataset.t; card.querySelectorAll(".slot")[next].classList.add("c"+(next%3));
+        t.classList.add("used"); t.disabled=true; next++;
+        if(next===W.c.length){card.classList.add("right");fb.className="fb good";fb.innerHTML="✅ You built <b>"+W.w+"</b>! Tip: "+W.tip;say(W.w);updateNext();}
+        else{fb.className="fb good";fb.textContent="✅ Yes! What comes next?";}
+      }else{
+        card.classList.remove("wrong"); void card.offsetWidth; card.classList.add("wrong");
+        fb.className="fb try"; fb.textContent="Good try! Say the word slowly. Listen again, or take a peek.";
+      }
+    });
+  });
+}
+const pair=(a,b,n)=>({tag:"Page "+n,title:"Build: "+WORDS[a].w+" and "+WORDS[b].w,
+  say:"Look at the word. Say it. Cover it. Then build it from the pieces. Words: "+WORDS[a].w+", and "+WORDS[b].w+".",
+  body:()=>`${n===1?`<ul class="points"><li><span class="ico">👀</span><span><b>Look</b> at the word in pieces.</span></li><li><span class="ico">🔊</span><span><b>Say</b> it out loud. Tap Hear it.</span></li><li><span class="ico">🧱</span><span><b>Cover</b> it, then <b>build</b> it from the pieces.</span></li></ul>`:""}
+    <div class="cards">${spellCard(a)}${spellCard(b)}</div>`,after:initSpell});
+const scenes=[pair(0,1,1),pair(2,3,2),pair(4,5,3),pair(6,7,4),
+ { tag:"Finish", title:"Word wizard!", say:"Well done! You built eight tricky science words. Practise them again tomorrow to help them stick.",
+   body:()=>`
+   <div class="finish">
+     <div class="big-stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
+     <p><b>Brilliant effort!</b> Tricky spellings take practice, and you kept going.</p>
+     <div class="wordbank">${WORDS.map(W=>`<span>${W.e} ${W.w}</span>`).join("")}</div>
+     <p style="color:var(--muted)">Come back tomorrow and build them again. Each time makes them stick.</p>
+   </div>`}];
+
+const praise=["Yes! Great thinking.","Spot on!","Brilliant!","You got it!","Super work!"];
+let cur=0;
+const stage=$("#stage"), trail=$("#trail");
+function render(){
+  const s=scenes[cur]; stopSpeech();
+  stage.innerHTML=`<section class="scene" aria-labelledby="st">
+    <div class="scene-head"><div><span class="tag">${s.tag}</span><h2 id="st">${s.title}</h2></div>
+    ${canSpeak?`<button type="button" class="say-btn" id="say" aria-pressed="false">🔊 Read to me</button>`:""}</div>
+    ${s.body()}</section>`;
+  if(s.after) s.after();
+  trail.innerHTML=scenes.map((x,i)=>`<li class="${i<cur?"done":""} ${i===cur?"on":""}" aria-current="${i===cur?"step":"false"}">${i===scenes.length-1?"★":i+1}</li>`).join("");
+  $("#back").disabled=cur===0; $("#next").hidden=cur===scenes.length-1;
+  updateNext(); window.scrollTo({top:0,behavior:reduce?"auto":"smooth"});
+}
+function remaining(){return [...stage.querySelectorAll(".qcard")].filter(c=>!c.classList.contains("right")).length}
+function updateNext(){const left=remaining();$("#next").disabled=left>0;$("#lockNote").textContent=left>0?`${left} left to try`:"";}
+stage.addEventListener("click",e=>{
+  const k=e.target.closest(".kw"); if(k){toggleDef(k);return;}
+  const c=e.target.closest(".choice:not(.ostep)"); if(c){answer(c);return;}
+  if(e.target.closest("#say")) speak();
+});
+function toggleDef(k){
+  const nx=k.nextElementSibling;
+  if(nx&&nx.classList.contains("def")){nx.remove();return;}
+  const d=document.createElement("span"); d.className="def"; d.textContent=defs[k.dataset.kw]||""; k.after(d);
+}
+function answer(btn){
+  const card=btn.closest(".qcard"); if(!card||card.dataset.ans===undefined||card.classList.contains("right"))return;
+  const fb=card.querySelector(".fb"), any=card.dataset.ans==="*";
+  if(any||btn.dataset.v===card.dataset.ans){
+    card.classList.add("right"); fb.className="fb good";
+    fb.textContent=any?(card.dataset.why||"✅ Thank you for choosing."):("✅ "+praise[Math.floor(Math.random()*praise.length)]+(card.dataset.why?" "+card.dataset.why:""));
+    card.querySelectorAll(".choice").forEach(b=>{b.disabled=true;if(b!==btn)b.style.opacity=.4});
+    if(card.classList.contains("sort")){
+      const chip=document.createElement("span"); chip.className="chip"; chip.textContent=card.dataset.chip;
+      $("#bk-"+card.dataset.ans).appendChild(chip);
+    }
+    if(card.dataset.on) (hooks[card.dataset.on]||(()=>{}))(btn.dataset.v,card);
+    updateNext();
+  }else{
+    card.classList.remove("wrong"); void card.offsetWidth; card.classList.add("wrong");
+    fb.className="fb try"; fb.textContent="Good try! Hint: "+card.dataset.hint;
+  }
+}
+const canSpeak=("speechSynthesis" in window)&&typeof SpeechSynthesisUtterance!=="undefined";
+function stopSpeech(){try{if(canSpeak)speechSynthesis.cancel()}catch(e){}}
+function speak(){
+  const b=$("#say");
+  try{
+    if(speechSynthesis.speaking){stopSpeech();b.setAttribute("aria-pressed","false");return;}
+    const u=new SpeechSynthesisUtterance(scenes[cur].title+". "+scenes[cur].say);
+    const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang)); if(v)u.voice=v;
+    u.lang="en-GB"; u.rate=.85; u.onend=()=>b&&b.setAttribute("aria-pressed","false");
+    b.setAttribute("aria-pressed","true"); speechSynthesis.speak(u);
+  }catch(e){b.textContent="Sound not available";b.disabled=true;}
+}
+$("#next").addEventListener("click",()=>{if(cur<scenes.length-1){cur++;render();}});
+$("#back").addEventListener("click",()=>{if(cur>0){cur--;render();}});
+render();
+})();
+</script>
+</body>
+</html>

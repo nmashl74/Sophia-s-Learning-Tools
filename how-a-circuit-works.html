@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>How a Circuit Works</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Lexend:wght@400;600&display=swap">
+<style>
+:root{--bg:#F6F4FB;--card:#FFFFFF;--ink:#23263F;--muted:#5A5D7C;--accent:#8A3FA0;--soft:#F1E4F6;--line:#DCD7EC}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17162A;--card:#222039;--ink:#EEEAF7;--muted:#ABA6C6;--accent:#D49BE6;--soft:#352A45;--line:#3A3656;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17162A;--card:#222039;--ink:#EEEAF7;--muted:#ABA6C6;--accent:#D49BE6;--soft:#352A45;--line:#3A3656;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Lexend,Verdana,sans-serif;font-size:19px;line-height:1.6}
+.wrap{max-width:520px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px}
+a.home{font-family:Fredoka,sans-serif;color:var(--accent);text-decoration:none}
+h1{font-family:Fredoka,sans-serif;font-weight:600;margin:0}
+small{color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:.8rem}
+video{width:100%;max-width:100%;border-radius:18px;border:2px solid var(--line);background:#F6F4FB}
+button{font:inherit;color:inherit;border:2px solid var(--accent);background:var(--soft);border-radius:999px;padding:8px 16px;cursor:pointer;justify-self:start}
+.tip{border:2px dashed var(--accent);border-radius:16px;padding:12px 14px;font-size:.95rem}
+details{color:var(--muted);font-size:.9rem;border-top:2px dashed var(--line);padding-top:12px}
+</style></head><body>
+<div class="wrap">
+  <a class="home" href="index.html">🏠 All my pages</a>
+  <div><small>Physics · 7J video</small><h1>How a circuit works</h1></div>
+  <video id="v" src="how-a-circuit-works.mp4" controls playsinline preload="metadata"></video>
+  <button type="button" id="say">🔊 Read the words to me</button>
+  <p class="tip">Watch it twice. Then try <a href="circuit-workshop.html">Circuit Workshop</a>.</p>
+  <details><summary>For grown-ups</summary><p>A 41-second silent animation with short captions, covering 7Ja–7Jb (current, energy, gaps, ammeters). There is no voice in the video itself; the button reads all the captions aloud using the phone's own voice.</p></details>
+</div>
+<script>
+const words="How does a circuit work? One. A cell, wires, a switch and a bulb make one loop. Two. The cell pushes charges round the loop. This flow is called current. Three. Charges pick up energy at the cell, and drop it off at the bulb. Four. Open the switch. Now there is a gap. No complete loop means no current. Light off! Five. Ammeters measure current. It's the same everywhere in the loop. Remember: complete loop equals light!";
+document.getElementById("say").addEventListener("click",()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(words);u.lang="en-GB";u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}});
+</script>
+</body></html>

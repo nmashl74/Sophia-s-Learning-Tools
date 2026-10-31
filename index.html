@@ -16,6 +16,7 @@
   --phys:#3563C9; --phys-soft:#E3EBFB;
   --chem:#23824F; --chem-soft:#DDF3E6;
   --hist:#B07A00; --hist-soft:#F7EDD2;
+  --bio:#B4446A; --bio-soft:#FBE4EC;
   --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Lexend","Verdana",system-ui,sans-serif;
   color-scheme:light;
@@ -25,13 +26,13 @@
   --accent:#D49BE6; --accent-soft:#352A45;
   --phys:#8FB0F5; --phys-soft:#23304F;
   --chem:#6FD39B; --chem-soft:#1F3A2C;
-  --hist:#F2C552; --hist-soft:#3B3220; color-scheme:dark}}
+  --hist:#F2C552; --hist-soft:#3B3220; --bio:#F28FB1; --bio-soft:#41252F; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
   --accent:#D49BE6; --accent-soft:#352A45;
   --phys:#8FB0F5; --phys-soft:#23304F;
   --chem:#6FD39B; --chem-soft:#1F3A2C;
-  --hist:#F2C552; --hist-soft:#3B3220; color-scheme:dark}
+  --hist:#F2C552; --hist-soft:#3B3220; --bio:#F28FB1; --bio-soft:#41252F; color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.6;letter-spacing:.02em;word-spacing:.08em}
 .wrap{max-width:640px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
@@ -48,6 +49,8 @@ h1{font-size:2rem;text-wrap:balance}
 .phys{border-color:var(--phys)} .phys .ico{background:var(--phys-soft)} .phys small,.phys .go{color:var(--phys)}
 .chem{border-color:var(--chem)} .chem .ico{background:var(--chem-soft)} .chem small,.chem .go{color:var(--chem)}
 .hist{border-color:var(--hist)} .hist .ico{background:var(--hist-soft)} .hist small,.hist .go{color:var(--hist)}
+.sec{font-size:1.2rem;margin:22px 0 10px;color:var(--muted)}
+.bio{border-color:var(--bio)} .bio .ico{background:var(--bio-soft)} .bio small,.bio .go{color:var(--bio)}
 .tip{margin-top:24px;padding:14px 16px;border:2px dashed var(--accent);border-radius:16px;font-size:.95rem}
 </style>
 </head>
@@ -55,6 +58,17 @@ h1{font-size:2rem;text-wrap:balance}
 <div class="wrap">
   <h1>Hi Sophia! 🌟</h1>
   <p class="hello">Pick a page. Take your time. You can always go back.</p>
+  <h2 class="sec">✨ New: try these tools</h2>
+  <ul class="list">
+    <li><a class="page bio" href="organ-explorer.html"><span class="ico" aria-hidden="true">🫀</span><span><small>Biology · label it</small><h2>Organ Explorer</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page bio" href="word-builder.html"><span class="ico" aria-hidden="true">🧱</span><span><small>Spelling</small><h2>Word Builder</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page bio" href="flip-cards.html"><span class="ico" aria-hidden="true">🔄</span><span><small>Biology · practice</small><h2>Biology Flip Cards</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page phys" href="symbol-pairs.html"><span class="ico" aria-hidden="true">🃏</span><span><small>Physics · game</small><h2>Circuit Symbol Pairs</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page phys" href="how-a-circuit-works.html"><span class="ico" aria-hidden="true">🎬</span><span><small>Physics · video</small><h2>How a Circuit Works</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page hist" href="alfreds-year.html"><span class="ico" aria-hidden="true">📜</span><span><small>History · comic</small><h2>Alfred's Year: 878</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page hist" href="paragraph-builder.html"><span class="ico" aria-hidden="true">✍️</span><span><small>History · writing</small><h2>Paragraph Builder</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+  </ul>
+  <h2 class="sec">📚 My lessons</h2>
   <ul class="list">
     <li><a class="page phys" href="circuit-workshop.html"><span class="ico" aria-hidden="true">💡</span><span><small>Physics · now</small><h2>Circuit Workshop</h2></span><span class="go" aria-hidden="true">→</span></a></li>
     <li><a class="page chem" href="mixture-mix-up.html"><span class="ico" aria-hidden="true">🧂</span><span><small>Chemistry · recap</small><h2>Mixture Mix-Up</h2></span><span class="go" aria-hidden="true">→</span></a></li>
@@ -63,7 +77,7 @@ h1{font-size:2rem;text-wrap:balance}
     <li><a class="page chem" href="colour-detectives.html"><span class="ico" aria-hidden="true">🎨</span><span><small>Chemistry</small><h2>Colour Detectives</h2></span><span class="go" aria-hidden="true">→</span></a></li>
     <li><a class="page hist" href="crown-of-england.html"><span class="ico" aria-hidden="true">👑</span><span><small>History</small><h2>Crown of England</h2></span><span class="go" aria-hidden="true">→</span></a></li>
   </ul>
-  <p class="tip">🔊 Every page has a <b>Read to me</b> button.</p>
+  <p class="tip">🔊 Every page has a <b>Read to me</b> button. 🖨️ Printable cards: ask a grown-up.</p>
 </div>
 </body>
 </html>

@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@400;500;600&display=swap">
 <style>
 body{margin:0}
+[hidden]{display:none!important}
 /* Layout: one "scene" at a time, like a storybook page, with a progress trail of stars on top */
 :root{
   --bg:#F6F4FB; --card:#FFFFFF; --ink:#23263F; --muted:#5A5D7C; --line:#DCD7EC;
@@ -369,7 +370,7 @@ function toggleDef(k){
   const d=document.createElement("span"); d.className="def"; d.textContent=defs[k.dataset.kw]||""; k.after(d);
 }
 function answer(btn){
-  const card=btn.closest(".qcard"); if(!card||card.classList.contains("right"))return;
+  const card=btn.closest(".qcard"); if(!card||card.dataset.ans===undefined||card.classList.contains("right"))return;
   const fb=card.querySelector(".fb"), any=card.dataset.ans==="*";
   if(any||btn.dataset.v===card.dataset.ans){
     card.classList.add("right"); fb.className="fb good";
