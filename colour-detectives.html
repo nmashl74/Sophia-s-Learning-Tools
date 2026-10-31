@@ -174,7 +174,7 @@ details.grownup ul{padding-left:20px;margin:8px 0}
       <li>Method: pencil start line, water below the line, let it run, dry it.</li>
       <li>Use: matching inks (forensic science, from 7Ea).</li>
     </ul>
-    <p>Lesson code and page numbers checked against her textbook contents page. The key words are from general Year 7 content: check them against the bold words on pp.16–17.</p>
+    <p>Key words checked against the bold words on textbook pp.16–17 (31 Oct 2026): chromatography, paper chromatography, concentrated, chromatogram. In the book but not on this page: machine chromatography and its peak graph, colourless substances and UV light, and uses such as testing water, food colourings and drug tests in sport.</p>
   </details>
 </div>
 
@@ -190,7 +190,9 @@ const defs={
   solvent:"The liquid that dissolves things. Here it is water.",
   soluble:"Able to dissolve.",
   dissolve:"Break up into tiny bits and mix into a liquid, like sugar in tea.",
-  "start line":"A line drawn in pencil near the bottom of the paper. The ink dot goes on it.",
+  "paper chromatography":"The simplest kind of chromatography. It uses special paper.",
+  concentrated:"Strong. Lots of colour packed into a small dot.",
+  "pencil line":"A line drawn in pencil near the bottom of the paper. The ink dots start on it.",
   forensic:"Using science to solve crimes."
 };
 const kw=(w,label)=>`<button type="button" class="kw" data-kw="${w}">${label||w}</button>`;
@@ -235,12 +237,12 @@ const scenes=[
    after:()=>{ $("#runBtn").addEventListener("click",runPaper); }},
 
  { tag:"Page 2", title:"Why do the dyes split?",
-   say:"Water is the solvent. It climbs up the paper. The dyes dissolve and travel with the water. The dye that dissolves best travels furthest. Task: Which dye is the most soluble?",
+   say:"Water is the solvent. It climbs up the paper. The dyes dissolve and travel with the water. The solvent carries the dyes at different speeds. The dye that dissolves best is carried fastest, so it goes furthest. Task: Which dye is the most soluble?",
    body:()=>`
    <ul class="points">
      <li><span class="ico">💧</span><span>Water is the ${kw("solvent")}. It climbs up the paper.</span></li>
      <li><span class="ico">🚌</span><span>The dyes ${kw("dissolve")} and ride along with the water.</span></li>
-     <li><span class="ico">🏆</span><span>The most ${kw("soluble")} dye travels <b>furthest</b>.</span></li>
+     <li><span class="ico">🏆</span><span>The most ${kw("soluble")} dye is carried <b>fastest</b>. So it goes furthest.</span></li>
    </ul>
    <div class="mnemonic"><b>Think of a dance show 🩰</b>
      <p>The water is the music. The dyes are dancers. The dancer who loves the music most dances furthest across the stage!</p>
@@ -253,12 +255,12 @@ const scenes=[
    </div>`},
 
  { tag:"Page 3", title:"Doing the experiment",
-   say:"Now the method. Tap the steps in the right order. Start with step one.",
+   say:"Paper chromatography uses special paper. Put a small, concentrated dot of ink on a pencil line. Keep the water below the line. The finished paper is called a chromatogram. Task: Tap the steps in the right order. Start with step one.",
    body:()=>`
    <ul class="points">
-     <li><span class="ico">✏️</span><span>Draw a ${kw("start line")} in <b>pencil</b>.</span></li>
-     <li><span class="ico">💧</span><span>Keep the water <b>below</b> the line.</span></li>
-     <li><span class="ico">📄</span><span>The finished paper is called a ${kw("chromatogram")}.</span></li>
+     <li><span class="ico">📄</span><span>${kw("paper chromatography","Paper chromatography")} uses special paper.</span></li>
+     <li><span class="ico">✏️</span><span>Put a small, ${kw("concentrated")} dot of ink on a ${kw("pencil line")}.</span></li>
+     <li><span class="ico">💧</span><span>Keep the water <b>below</b> the line. The finished paper is a ${kw("chromatogram")}.</span></li>
    </ul>
    <div class="task qcard order" data-id="p3-order">
      <div class="task-title">Put the steps in order. Tap step 1 first.</div>
@@ -311,7 +313,7 @@ const scenes=[
      <div class="big-stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
      <p><b>Brilliant detective work!</b> You kept trying, even on the tricky ones.</p>
      <p>Tap a word to remind yourself what it means:</p>
-     <div class="wordbank">${["chromatography","chromatogram","dye","mixture","solvent","dissolve","soluble","start line","forensic"].map(w=>kw(w)).join("")}</div>
+     <div class="wordbank">${["chromatography","paper chromatography","chromatogram","concentrated","dye","mixture","solvent","dissolve","soluble","pencil line","forensic"].map(w=>kw(w)).join("")}</div>
      <p style="color:var(--muted)">Can you tell a grown-up why the line is drawn in pencil?</p>
    </div>`}
 ];
@@ -344,7 +346,7 @@ function runPaper(){
 /* page 3 ordering */
 const steps=[
   ["Draw a pencil line near the bottom of the paper.","What do you need before you can add the ink?"],
-  ["Put a small dot of ink on the pencil line.","The ink needs somewhere to sit first. Then what?"],
+  ["Put a small, concentrated dot of ink on the pencil line.","The ink needs somewhere to sit first. Then what?"],
   ["Stand the paper in a little water. Keep the water below the line.","The dot is ready. How does the water get to it?"],
   ["Wait while the water climbs up the paper.","The paper is in the water. Now what do you do?"],
   ["Take the paper out and let it dry.","This is the very last thing you do."]

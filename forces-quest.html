@@ -153,12 +153,13 @@ details.grownup ul{padding-left:20px;margin:8px 0}
 
   <details class="grownup">
     <summary>For grown-ups</summary>
-    <p>Covers lesson 7Ka "Different forces" (week M8, textbook pp. 37–39):</p>
+    <p>Covers lesson 7Ka "Different forces" (week M8, textbook pp. 38–39). Key words checked against the book's bold words, 31 Oct 2026.</p>
     <ul>
       <li>Effects of forces: speed, direction, shape.</li>
       <li>Naming forces; contact vs non-contact.</li>
-      <li>Measuring force (newtons, force meter) and mass (kilograms, scales).</li>
+      <li>Measuring force (newtons, force meter) and mass (grams/kilograms, scales). Weight is a force.</li>
     </ul>
+    <p>In the book but not on this page: force arrows (bigger arrow = bigger force), weight on the Earth vs the Moon, and the standard kilogram. The force meter isn't on this spread; we added it as the hands-on task.</p>
     <p>Wrong answers give a hint, not the answer. Each task unlocks the next page.</p>
   </details>
 </div>
@@ -174,13 +175,13 @@ const defs={
   upthrust:"Water pushing up on something. It helps things float.",
   gravity:"The Earth pulling everything down towards it.",
   magnetism:"A magnet pulling or pushing some metals, like iron.",
-  static:"A force made by rubbing things, like a balloon on your hair.",
+  "static electricity":"A force made by rubbing things, like a balloon on your hair. It works across a gap.",
   contact:"The things must touch.",
   "non-contact":"Works across a gap. Nothing needs to touch.",
   newton:"The unit for force. Short form: N.",
   "force meter":"A tool with a spring inside. It measures force in newtons.",
-  mass:"How much stuff is in something. Measured in kilograms (kg).",
-  weight:"How hard gravity pulls on something. It is a force, so it is in newtons."
+  mass:"How much stuff (matter) is in something. Measured in grams (g) or kilograms (kg).",
+  weight:"How hard gravity pulls on you. It is a force, so it is in newtons (N)."
 };
 const kw=(w,label)=>`<button type="button" class="kw" data-kw="${w}">${label||w}</button>`;
 
@@ -225,14 +226,14 @@ const scenes=[
    </div>`},
 
  { tag:"Page 3", title:"Touching or across a gap?",
-   say:"Contact forces only work when things touch. Non-contact forces work across a gap, like magic. Remember: Good Magic Sparkles. Gravity, Magnetism, Static. Task: Sort each force into the right basket.",
+   say:"Contact forces only work when things touch. Non-contact forces work across a gap, like magic. Remember: Good Magic Sparkles. Gravity, Magnetism, Static electricity. Task: Sort each force into the right basket.",
    body:()=>`
    <ul class="points">
      <li><span class="ico">🤝</span><span>${kw("contact","Contact")} forces need things to <b>touch</b>.</span></li>
      <li><span class="ico">🪄</span><span>${kw("non-contact","Non-contact")} forces work <b>across a gap</b>. Like magic!</span></li>
    </ul>
    <div class="mnemonic"><b>Remember the magic ones: “Good Magic Sparkles”</b>
-     <div class="letters"><span><b>G</b>ravity</span><span><b>M</b>agnetism</span><span><b>S</b>tatic</span></div>
+     <div class="letters"><span><b>G</b>ravity</span><span><b>M</b>agnetism</span><span><b>S</b>tatic electricity</span></div>
    </div>
    <div class="task">
      <div class="task-title">Sort the forces. Tap a word if you're not sure what it means.</div>
@@ -246,7 +247,7 @@ const scenes=[
        ["🧲","magnetism","A magnet picks up a pin.","gap"],
        ["🪂","air resistance","A parachute slows a teddy down.","touch"],
        ["🦆","upthrust","A duck floats on the pond.","touch"],
-       ["🎈","static","A balloon lifts your hair.","gap"],
+       ["🎈","static electricity","A balloon lifts your hair.","gap"],
        ["🐬","water resistance","Water slows a swimming dolphin.","touch"]
      ].map((c,i)=>sortCard(`p3-${i}`,...c)).join("")}</div>
    </div>`},
@@ -276,18 +277,18 @@ const scenes=[
    </div>`},
 
  { tag:"Page 5", title:"Mass or force?",
-   say:"Mass is how much stuff is in something. We measure mass in kilograms, k g, on scales. Weight is a force. It is in newtons. Task: Match each one.",
+   say:"Mass is how much stuff is in something. We measure mass in grams or kilograms, on scales. Weight is a force. It is in newtons. Task: Match each one.",
    body:()=>`
    <ul class="points">
      <li><span class="ico">🧁</span><span>${kw("mass","Mass")} is how much <b>stuff</b> is in something.</span></li>
-     <li><span class="ico">⚖️</span><span>Mass is in <b>kilograms (kg)</b>. We use scales.</span></li>
+     <li><span class="ico">⚖️</span><span>Mass is in <b>grams (g)</b> or <b>kilograms (kg)</b>. We use scales.</span></li>
      <li><span class="ico">🍎</span><span>${kw("weight","Weight")} is a <b>force</b>. So it is in newtons (N).</span></li>
    </ul>
    <div class="task">
      <div class="task-title">Match it! Tap your answer.</div>
      <div class="cards">${[
        ["📏","The unit for force is…",[["n","newtons (N)"],["kg","kilograms (kg)"]],"n","Force and Newton – both start with…?"],
-       ["🧁","The unit for mass is…",[["n","newtons (N)"],["kg","kilograms (kg)"]],"kg","Mass is how much stuff. What do you see on a bag of flour?"],
+       ["🧁","The unit for mass is…",[["n","newtons (N)"],["kg","grams (g) and kilograms (kg)"]],"kg","Mass is how much stuff. What do you see on a bag of flour?"],
        ["🌀","To measure a force, use a…",[["fm","force meter"],["sc","kitchen scales"]],"fm","Which one has a spring that stretches?"],
        ["🍎","Weight is a…",[["force","force"],["mass","mass"]],"force","Weight is gravity pulling. A pull is a…?"]
      ].map((c,i)=>qcard(`p5-${i}`,c[0],c[1],c[2],c[3],c[4])).join("")}</div>
@@ -299,7 +300,7 @@ const scenes=[
      <div class="big-stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
      <p><b>Brilliant effort!</b> You kept trying, even on the tricky ones.</p>
      <p>Tap a word to remind yourself what it means:</p>
-     <div class="wordbank">${["force","contact","non-contact","friction","gravity","upthrust","newton","force meter","mass","weight"].map(w=>kw(w)).join("")}</div>
+     <div class="wordbank">${["force","contact","non-contact","friction","air resistance","water resistance","upthrust","gravity","magnetism","static electricity","newton","force meter","mass","weight"].map(w=>kw(w)).join("")}</div>
      <p style="color:var(--muted)">Can you tell a grown-up the 3 S's and the magic forces?</p>
    </div>`}
 ];
