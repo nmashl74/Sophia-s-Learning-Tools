@@ -1,0 +1,428 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Forces Quest</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@400;500;600&display=swap">
+<style>
+/* Layout: one "scene" at a time, like a storybook page, with a progress trail of stars on top */
+:root{
+  --bg:#F6F4FB; --card:#FFFFFF; --ink:#23263F; --muted:#5A5D7C; --line:#DCD7EC;
+  --accent:#8A3FA0; --accent-soft:#F1E4F6;
+  --contact:#D9622B; --contact-soft:#FDEBDD;
+  --gap:#3563C9; --gap-soft:#E3EBFB;
+  --good:#23824F; --good-soft:#DDF3E6; --try:#B4441A; --try-soft:#FDE8DD;
+  --star:#E9A800;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Lexend","Verdana",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --contact:#F29A68; --contact-soft:#3B2A22;
+  --gap:#8FB0F5; --gap-soft:#23304F;
+  --good:#6FD39B; --good-soft:#1F3A2C; --try:#F59E6B; --try-soft:#40281D;
+  --star:#FFC933; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --contact:#F29A68; --contact-soft:#3B2A22;
+  --gap:#8FB0F5; --gap-soft:#23304F;
+  --good:#6FD39B; --good-soft:#1F3A2C; --try:#F59E6B; --try-soft:#40281D;
+  --star:#FFC933; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.65;letter-spacing:.02em;word-spacing:.08em}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0;letter-spacing:.01em}
+h1{font-size:1.9rem}
+h2{font-size:1.6rem}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand small{display:block;font-size:.8rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.trail{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.trail li{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);font-family:var(--f-display);font-weight:600;color:var(--muted);background:var(--card)}
+.trail li.on{border-color:var(--accent);color:var(--accent)}
+.trail li.done{background:var(--star);border-color:var(--star);color:#3a2a00}
+
+.scene{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:24px 22px;display:grid;gap:20px}
+.scene-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px}
+.say-btn{border:2px solid var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:.9rem;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.say-btn[aria-pressed="true"]{background:var(--accent);color:var(--card)}
+
+.points{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.points li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--accent-soft)}
+.points .ico{font-size:1.5rem;line-height:1.2;flex:none}
+
+.kw{border:none;background:none;padding:0 2px;font-weight:600;color:var(--accent);text-decoration:underline dotted 2px;text-underline-offset:4px}
+.def{display:block;margin-top:6px;padding:8px 12px;border-left:4px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;font-size:.95rem}
+
+.mnemonic{border:2px dashed var(--accent);border-radius:16px;padding:14px 16px;display:grid;gap:8px}
+.mnemonic .letters{display:flex;flex-wrap:wrap;gap:10px}
+.mnemonic .letters span{font-family:var(--f-display);font-size:1.15rem}
+.mnemonic b{font-size:1.5rem;color:var(--accent)}
+
+.task{display:grid;gap:12px}
+.task-title{font-family:var(--f-display);font-size:1.25rem;font-weight:600;display:flex;gap:8px;align-items:center}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.qcard{border:2px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;background:var(--card);transition:border-color .2s,background .2s}
+.qcard .what{display:flex;gap:12px;align-items:center}
+.qcard .pic{font-size:2.2rem;line-height:1;flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:var(--bg)}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 14px;min-height:44px;font-weight:500}
+.choice:hover{border-color:var(--accent)}
+.qcard.right{border-color:var(--good);background:var(--good-soft)}
+.qcard.wrong{animation:wob .35s}
+.fb{font-size:.95rem;min-height:0}
+.fb.good{color:var(--good);font-weight:600}
+.fb.try{color:var(--try);font-weight:600}
+@keyframes wob{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* sorting baskets */
+.baskets{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.basket{border-radius:16px;padding:12px;min-height:110px;display:flex;flex-direction:column;gap:8px}
+.basket h3{font-size:1.1rem;display:flex;gap:6px;align-items:center}
+.basket p.hint{font-size:.85rem;color:var(--muted)}
+.basket.touch{background:var(--contact-soft);border:2px solid var(--contact)}
+.basket.gapb{background:var(--gap-soft);border:2px solid var(--gap)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border-radius:999px;padding:4px 12px;font-size:.9rem;font-weight:600;background:var(--card)}
+.touch .chip{border:2px solid var(--contact)}
+.gapb .chip{border:2px solid var(--gap)}
+.choice.c-touch{border-color:var(--contact)}
+.choice.c-gap{border-color:var(--gap)}
+@media (max-width:480px){.baskets{grid-template-columns:1fr}}
+
+/* force meter */
+.meter{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start}
+.meter svg{width:150px;height:auto;max-width:100%}
+.toys{display:grid;gap:8px}
+.toy{display:flex;gap:10px;align-items:center;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:8px 12px;min-height:52px}
+.toy[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.toy .e{font-size:1.7rem}
+.toy small{display:block;color:var(--muted);font-size:.85rem}
+.reading{font-family:var(--f-display);font-size:1.4rem;font-variant-numeric:tabular-nums}
+@media (max-width:480px){.meter{grid-template-columns:1fr;justify-items:center}.toys{width:100%}}
+
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
+.btn{border:none;border-radius:14px;padding:12px 22px;font-family:var(--f-display);font-size:1.15rem;font-weight:600;min-height:52px}
+.btn.next{background:var(--accent);color:var(--card)}
+.btn.back{background:transparent;border:2px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.locked-note{font-size:.9rem;color:var(--muted);text-align:right}
+
+.finish{text-align:center;display:grid;gap:16px;justify-items:center}
+.big-stars{font-size:2.6rem;letter-spacing:.2em}
+.wordbank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.wordbank span{background:var(--accent-soft);border-radius:999px;padding:6px 14px;font-weight:500}
+
+details.grownup{margin-top:24px;border-top:2px dashed var(--line);padding-top:14px;font-size:.9rem;color:var(--muted)}
+details.grownup summary{cursor:pointer;font-weight:600}
+details.grownup ul{padding-left:20px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <a href="index.html" style="display:inline-block;margin-bottom:10px;font-family:var(--f-display);font-weight:600;color:var(--accent);text-decoration:none">🏠 All my pages</a>
+  <header class="top">
+    <div class="brand">
+      <div>
+        <small>Physics · 7K Forces</small>
+        <h1>Forces Quest</h1>
+      </div>
+    </div>
+    <ol class="trail" id="trail" aria-label="Progress"></ol>
+  </header>
+
+  <main id="stage"></main>
+
+  <div class="nav">
+    <button class="btn back" id="back" type="button">← Back</button>
+    <div style="display:grid;gap:4px;justify-items:end">
+      <button class="btn next" id="next" type="button">Next →</button>
+      <span class="locked-note" id="lockNote"></span>
+    </div>
+  </div>
+
+  <details class="grownup">
+    <summary>For grown-ups</summary>
+    <p>Covers lesson 7Ka "Different forces" (week M8, textbook pp. 37–39):</p>
+    <ul>
+      <li>Effects of forces: speed, direction, shape.</li>
+      <li>Naming forces; contact vs non-contact.</li>
+      <li>Measuring force (newtons, force meter) and mass (kilograms, scales).</li>
+    </ul>
+    <p>Wrong answers give a hint, not the answer. Each task unlocks the next page.</p>
+  </details>
+</div>
+
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s);
+const defs={
+  force:"A push or a pull.",
+  friction:"A force when two things rub. It slows things down.",
+  "air resistance":"Air pushing back on something moving through it.",
+  "water resistance":"Water pushing back on something moving through it.",
+  upthrust:"Water pushing up on something. It helps things float.",
+  gravity:"The Earth pulling everything down towards it.",
+  magnetism:"A magnet pulling or pushing some metals, like iron.",
+  static:"A force made by rubbing things, like a balloon on your hair.",
+  contact:"The things must touch.",
+  "non-contact":"Works across a gap. Nothing needs to touch.",
+  newton:"The unit for force. Short form: N.",
+  "force meter":"A tool with a spring inside. It measures force in newtons.",
+  mass:"How much stuff is in something. Measured in kilograms (kg).",
+  weight:"How hard gravity pulls on something. It is a force, so it is in newtons."
+};
+const kw=(w,label)=>`<button type="button" class="kw" data-kw="${w}">${label||w}</button>`;
+
+const scenes=[
+ { tag:"Page 1", title:"What is a force?",
+   say:"A force is a push or a pull. You cannot see a force. But you can see what it does. Task: Is each one a push or a pull?",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">👐</span><span>A ${kw("force")} is a <b>push</b> or a <b>pull</b>.</span></li>
+     <li><span class="ico">👀</span><span>You can't see a force.</span></li>
+     <li><span class="ico">✨</span><span>But you can see what it <b>does</b>.</span></li>
+   </ul>
+   <div class="task">
+     <div class="task-title">Push or pull? Tap your answer.</div>
+     <div class="cards">${[
+       ["🩰","A dancer presses her feet down to jump up.","push","Think: are her feet moving the floor away, or towards her?"],
+       ["🐕","A puppy tugs on its lead.","pull","Is the lead moving towards the puppy, or away?"],
+       ["🎹","A finger presses a piano key.","push","Is the key going away from the finger?"],
+       ["🐭","Mice drag the pumpkin coach along.","pull","Are the mice in front, bringing it towards them?"]
+     ].map((c,i)=>qcard(`p1-${i}`,c[0],c[1],[["push","Push"],["pull","Pull"]],c[2],c[3])).join("")}</div>
+   </div>`},
+
+ { tag:"Page 2", title:"What can a force do?",
+   say:"A force can do three things. Change speed. Change direction. Change shape. Remember the three S's: Speed, Steer, Shape. Task: Which S is it?",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">⏩</span><span><b>Speed</b> – make it go faster or slower.</span></li>
+     <li><span class="ico">↪️</span><span><b>Steer</b> – make it change direction.</span></li>
+     <li><span class="ico">🫓</span><span><b>Shape</b> – squash, stretch or bend it.</span></li>
+   </ul>
+   <div class="mnemonic"><b>Remember: the 3 S's</b>
+     <div class="letters"><span>🌟 Speed</span><span>🌟 Steer</span><span>🌟 Shape</span></div>
+   </div>
+   <div class="task">
+     <div class="task-title">Which S is it? Tap your answer.</div>
+     <div class="cards">${[
+       ["🐱","A kitten taps a ball. The ball rolls faster.","speed","Is the ball going faster, turning, or changing shape?"],
+       ["🎾","A tennis ball hits a racket and flies back.","steer","Which way was the ball going? Which way now?"],
+       ["🦔","You squeeze play dough into a hedgehog.","shape","Look at the dough before and after."],
+       ["🚲","A bike's brakes make it slow down.","speed","Slower is still a change in…?"]
+     ].map((c,i)=>qcard(`p2-${i}`,c[0],c[1],[["speed","Speed"],["steer","Steer"],["shape","Shape"]],c[2],c[3])).join("")}</div>
+   </div>`},
+
+ { tag:"Page 3", title:"Touching or across a gap?",
+   say:"Contact forces only work when things touch. Non-contact forces work across a gap, like magic. Remember: Good Magic Sparkles. Gravity, Magnetism, Static. Task: Sort each force into the right basket.",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">🤝</span><span>${kw("contact","Contact")} forces need things to <b>touch</b>.</span></li>
+     <li><span class="ico">🪄</span><span>${kw("non-contact","Non-contact")} forces work <b>across a gap</b>. Like magic!</span></li>
+   </ul>
+   <div class="mnemonic"><b>Remember the magic ones: “Good Magic Sparkles”</b>
+     <div class="letters"><span><b>G</b>ravity</span><span><b>M</b>agnetism</span><span><b>S</b>tatic</span></div>
+   </div>
+   <div class="task">
+     <div class="task-title">Sort the forces. Tap a word if you're not sure what it means.</div>
+     <div class="baskets">
+       <div class="basket touch"><h3>🤝 Touching</h3><p class="hint">Contact forces</p><div class="chips" id="bk-touch"></div></div>
+       <div class="basket gapb"><h3>🪄 Across a gap</h3><p class="hint">Non-contact forces</p><div class="chips" id="bk-gap"></div></div>
+     </div>
+     <div class="cards" id="sortCards">${[
+       ["🩰","friction","Ballet shoes grip the floor.","touch"],
+       ["🍎","gravity","An apple falls from a tree.","gap"],
+       ["🧲","magnetism","A magnet picks up a pin.","gap"],
+       ["🪂","air resistance","A parachute slows a teddy down.","touch"],
+       ["🦆","upthrust","A duck floats on the pond.","touch"],
+       ["🎈","static","A balloon lifts your hair.","gap"],
+       ["🐬","water resistance","Water slows a swimming dolphin.","touch"]
+     ].map((c,i)=>sortCard(`p3-${i}`,...c)).join("")}</div>
+   </div>`},
+
+ { tag:"Page 4", title:"Measuring forces",
+   say:"We measure force in newtons. The short form is N. We use a force meter. It has a spring inside. Task: Hang each animal toy on the force meter. Which pulls hardest?",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">📏</span><span>We measure force in ${kw("newton","newtons")}. Short form: <b>N</b>.</span></li>
+     <li><span class="ico">🌀</span><span>We use a ${kw("force meter")}. It has a spring inside.</span></li>
+     <li><span class="ico">⬇️</span><span>Bigger pull = longer stretch.</span></li>
+   </ul>
+   <div class="task">
+     <div class="task-title">Hang each toy on the force meter.</div>
+     <div class="meter">
+       <svg id="meterSvg" viewBox="0 0 150 330" role="img" aria-label="Force meter"></svg>
+       <div class="toys" id="toys">${[
+         ["🐭","Mouse",1],["🐰","Bunny",4],["🦊","Fox",7],["🐻","Bear",10]
+       ].map(t=>`<button type="button" class="toy" data-n="${t[2]}" aria-pressed="false"><span class="e">${t[0]}</span><span>${t[1]}<small>Tap to hang</small></span></button>`).join("")}
+         <p class="reading" id="reading" aria-live="polite">Reading: 0 N</p>
+       </div>
+     </div>
+   </div>
+   <div class="task">
+     <div class="task-title">Check: which toy pulled hardest?</div>
+     <div class="cards">${qcard("p4-0","🏆","The toy with the biggest pull is…",[["mouse","Mouse"],["bunny","Bunny"],["fox","Fox"],["bear","Bear"]],"bear","Try hanging all four. Look at the number in N.")}</div>
+   </div>`},
+
+ { tag:"Page 5", title:"Mass or force?",
+   say:"Mass is how much stuff is in something. We measure mass in kilograms, k g, on scales. Weight is a force. It is in newtons. Task: Match each one.",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">🧁</span><span>${kw("mass","Mass")} is how much <b>stuff</b> is in something.</span></li>
+     <li><span class="ico">⚖️</span><span>Mass is in <b>kilograms (kg)</b>. We use scales.</span></li>
+     <li><span class="ico">🍎</span><span>${kw("weight","Weight")} is a <b>force</b>. So it is in newtons (N).</span></li>
+   </ul>
+   <div class="task">
+     <div class="task-title">Match it! Tap your answer.</div>
+     <div class="cards">${[
+       ["📏","The unit for force is…",[["n","newtons (N)"],["kg","kilograms (kg)"]],"n","Force and Newton – both start with…?"],
+       ["🧁","The unit for mass is…",[["n","newtons (N)"],["kg","kilograms (kg)"]],"kg","Mass is how much stuff. What do you see on a bag of flour?"],
+       ["🌀","To measure a force, use a…",[["fm","force meter"],["sc","kitchen scales"]],"fm","Which one has a spring that stretches?"],
+       ["🍎","Weight is a…",[["force","force"],["mass","mass"]],"force","Weight is gravity pulling. A pull is a…?"]
+     ].map((c,i)=>qcard(`p5-${i}`,c[0],c[1],c[2],c[3],c[4])).join("")}</div>
+   </div>`},
+
+ { tag:"Finish", title:"You did it!", say:"Well done! You kept going and worked hard. Here are the new words you learned.", finish:true,
+   body:()=>`
+   <div class="finish">
+     <div class="big-stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
+     <p><b>Brilliant effort!</b> You kept trying, even on the tricky ones.</p>
+     <p>Tap a word to remind yourself what it means:</p>
+     <div class="wordbank">${["force","contact","non-contact","friction","gravity","upthrust","newton","force meter","mass","weight"].map(w=>kw(w)).join("")}</div>
+     <p style="color:var(--muted)">Can you tell a grown-up the 3 S's and the magic forces?</p>
+   </div>`}
+];
+
+function qcard(id,pic,text,opts,ans,hint){
+  return `<div class="qcard" data-id="${id}" data-ans="${ans}" data-hint="${hint.replace(/"/g,'&quot;')}">
+    <div class="what"><span class="pic" aria-hidden="true">${pic}</span><span>${text}</span></div>
+    <div class="choices">${opts.map(o=>`<button type="button" class="choice" data-v="${o[0]}">${o[1]}</button>`).join("")}</div>
+    <p class="fb" aria-live="polite"></p></div>`;
+}
+function sortCard(id,pic,word,example,ans){
+  return `<div class="qcard sort" data-id="${id}" data-ans="${ans}" data-word="${word}"
+     data-hint="${ans==="gap"?"Does anything touch? Think of “Good Magic Sparkles”.":"Look closely – what is touching what?"}">
+    <div class="what"><span class="pic" aria-hidden="true">${pic}</span><span>${kw(word,word[0].toUpperCase()+word.slice(1))}<br><span style="font-size:.95rem">${example}</span></span></div>
+    <div class="choices"><button type="button" class="choice c-touch" data-v="touch">🤝 Touching</button><button type="button" class="choice c-gap" data-v="gap">🪄 Across a gap</button></div>
+    <p class="fb" aria-live="polite"></p></div>`;
+}
+
+const praise=["Yes! Great thinking.","Spot on!","Brilliant!","You got it!","Super work!"];
+let cur=0, solved=new Set(), maxSeen=0;
+try{const s=JSON.parse(localStorage.getItem("forcesQuest")||"{}");if(Number.isInteger(s.max))maxSeen=s.max;}catch(e){}
+
+const stage=$("#stage"), trail=$("#trail");
+function save(){try{localStorage.setItem("forcesQuest",JSON.stringify({max:maxSeen}))}catch(e){}}
+
+function render(){
+  const s=scenes[cur];
+  stopSpeech();
+  stage.innerHTML=`<section class="scene" aria-labelledby="st">
+    <div class="scene-head"><div><span class="tag">${s.tag}</span><h2 id="st">${s.title}</h2></div>
+    ${canSpeak?`<button type="button" class="say-btn" id="say" aria-pressed="false">🔊 Read to me</button>`:""}</div>
+    ${s.body()}</section>`;
+  trail.innerHTML=scenes.map((x,i)=>`<li class="${i<cur||i<=maxSeen&&i!==cur&&doneScene(i)?"done":""} ${i===cur?"on":""}" aria-current="${i===cur?"step":"false"}">${i===scenes.length-1?"★":i+1}</li>`).join("");
+  if(cur===3) drawMeter(0);
+  $("#back").disabled=cur===0;
+  $("#next").hidden=cur===scenes.length-1;
+  updateNext();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function doneScene(i){return i<maxSeen}
+function remaining(){return [...stage.querySelectorAll(".qcard")].filter(c=>!c.classList.contains("right")).length}
+function updateNext(){
+  const left=remaining();
+  const n=$("#next"), note=$("#lockNote");
+  n.disabled=left>0;
+  note.textContent=left>0?`${left} left to try`:"";
+}
+
+stage.addEventListener("click",e=>{
+  const k=e.target.closest(".kw");
+  if(k){ toggleDef(k); return; }
+  const c=e.target.closest(".choice");
+  if(c){ answer(c); return; }
+  const t=e.target.closest(".toy");
+  if(t){ stage.querySelectorAll(".toy").forEach(b=>b.setAttribute("aria-pressed","false")); t.setAttribute("aria-pressed","true"); drawMeter(+t.dataset.n); return; }
+  if(e.target.closest("#say")) speak();
+});
+
+function toggleDef(k){
+  const nx=k.nextElementSibling;
+  if(nx&&nx.classList.contains("def")){nx.remove();return;}
+  const d=document.createElement("span"); d.className="def"; d.textContent=defs[k.dataset.kw]||"";
+  k.after(d);
+}
+
+function answer(btn){
+  const card=btn.closest(".qcard"); if(card.classList.contains("right"))return;
+  const fb=card.querySelector(".fb");
+  if(btn.dataset.v===card.dataset.ans){
+    card.classList.add("right");
+    fb.className="fb good"; fb.textContent="✅ "+praise[Math.floor(Math.random()*praise.length)];
+    card.querySelectorAll(".choice").forEach(b=>{b.disabled=true; if(b!==btn) b.style.opacity=.4});
+    if(card.classList.contains("sort")){
+      const chip=document.createElement("span"); chip.className="chip"; chip.textContent=card.dataset.word;
+      $(card.dataset.ans==="gap"?"#bk-gap":"#bk-touch").appendChild(chip);
+    }
+    updateNext();
+  }else{
+    card.classList.remove("wrong"); void card.offsetWidth; card.classList.add("wrong");
+    fb.className="fb try"; fb.textContent="Good try! Hint: "+card.dataset.hint;
+  }
+}
+
+/* force meter drawing */
+function drawMeter(n){
+  const svg=$("#meterSvg"); if(!svg)return;
+  const top=40, baseLen=60, perN=14, len=baseLen+n*perN, coils=10, w=26, cx=75;
+  let pts=`${cx},${top}`;
+  for(let i=1;i<=coils*2;i++){ pts+=` ${cx+(i%2?w/2:-w/2)},${top+len*i/(coils*2+1)}`; }
+  pts+=` ${cx},${top+len}`;
+  const ticks=[...Array(11)].map((_,i)=>{const y=top+baseLen+i*perN;return `<line x1="112" x2="${i%5?120:126}" y1="${y}" y2="${y}" stroke="var(--muted)" stroke-width="2"/>${i%5?"":`<text x="130" y="${y+5}" font-size="13" fill="var(--muted)" font-family="Lexend,sans-serif">${i}</text>`}`}).join("");
+  const toy=stage.querySelector('.toy[aria-pressed="true"] .e');
+  svg.innerHTML=`
+    <rect x="45" y="6" width="60" height="22" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="${cx}" y1="28" x2="${cx}" y2="${top}" stroke="var(--ink)" stroke-width="3"/>
+    <rect x="40" y="${top-4}" width="70" height="${baseLen+10*perN+16}" rx="10" fill="none" stroke="var(--line)" stroke-width="2"/>
+    ${ticks}
+    <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="100" x2="112" y1="${top+len}" y2="${top+len}" stroke="var(--try)" stroke-width="3"/>
+    <line x1="${cx}" y1="${top+len}" x2="${cx}" y2="${top+len+14}" stroke="var(--ink)" stroke-width="3"/>
+    <path d="M${cx} ${top+len+14} q0 10 -8 10" fill="none" stroke="var(--ink)" stroke-width="3"/>
+    ${toy?`<text x="${cx}" y="${top+len+52}" font-size="34" text-anchor="middle">${toy.textContent}</text>`:""}
+    <text x="12" y="${top+baseLen+5*perN}" font-size="13" fill="var(--muted)" font-family="Lexend,sans-serif" transform="rotate(-90 12 ${top+baseLen+5*perN})" text-anchor="middle">newtons (N)</text>`;
+  $("#reading").textContent=`Reading: ${n} N`;
+}
+
+/* read aloud */
+const canSpeak=("speechSynthesis" in window)&&typeof SpeechSynthesisUtterance!=="undefined";
+function stopSpeech(){try{if(canSpeak)speechSynthesis.cancel()}catch(e){}}
+function speak(){
+  const b=$("#say");
+  try{
+    if(speechSynthesis.speaking){stopSpeech();b.setAttribute("aria-pressed","false");return;}
+    const u=new SpeechSynthesisUtterance(scenes[cur].title+". "+scenes[cur].say);
+    const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang)); if(v)u.voice=v;
+    u.lang="en-GB"; u.rate=.85;
+    u.onend=()=>b&&b.setAttribute("aria-pressed","false");
+    b.setAttribute("aria-pressed","true"); speechSynthesis.speak(u);
+  }catch(e){ b.textContent="Sound not available"; b.disabled=true; }
+}
+
+$("#next").addEventListener("click",()=>{ if(cur<scenes.length-1){cur++; maxSeen=Math.max(maxSeen,cur); save(); render();} });
+$("#back").addEventListener("click",()=>{ if(cur>0){cur--; render();} });
+render();
+})();
+</script>
+
+</body></html>

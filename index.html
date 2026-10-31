@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sophia's Learning Pages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F6F4FB; --card:#FFFFFF; --ink:#23263F; --muted:#5A5D7C; --line:#DCD7EC;
+  --accent:#8A3FA0; --accent-soft:#F1E4F6;
+  --phys:#3563C9; --phys-soft:#E3EBFB;
+  --chem:#23824F; --chem-soft:#DDF3E6;
+  --hist:#B07A00; --hist-soft:#F7EDD2;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Lexend","Verdana",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --phys:#8FB0F5; --phys-soft:#23304F;
+  --chem:#6FD39B; --chem-soft:#1F3A2C;
+  --hist:#F2C552; --hist-soft:#3B3220; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --phys:#8FB0F5; --phys-soft:#23304F;
+  --chem:#6FD39B; --chem-soft:#1F3A2C;
+  --hist:#F2C552; --hist-soft:#3B3220; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.6;letter-spacing:.02em;word-spacing:.08em}
+.wrap{max-width:640px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+h1,h2{font-family:var(--f-display);font-weight:600;line-height:1.2;margin:0}
+h1{font-size:2rem;text-wrap:balance}
+.hello{margin:6px 0 22px;color:var(--muted)}
+.list{display:grid;gap:14px;list-style:none;margin:0;padding:0}
+.page{display:flex;gap:16px;align-items:center;text-decoration:none;color:inherit;background:var(--card);border:3px solid var(--line);border-radius:20px;padding:16px 18px;min-height:88px}
+.page:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.page .ico{font-size:2.4rem;width:64px;height:64px;flex:none;display:grid;place-items:center;border-radius:16px}
+.page small{display:block;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.page h2{font-size:1.35rem}
+.page .go{margin-left:auto;font-family:var(--f-display);font-size:1.6rem}
+.phys{border-color:var(--phys)} .phys .ico{background:var(--phys-soft)} .phys small,.phys .go{color:var(--phys)}
+.chem{border-color:var(--chem)} .chem .ico{background:var(--chem-soft)} .chem small,.chem .go{color:var(--chem)}
+.hist{border-color:var(--hist)} .hist .ico{background:var(--hist-soft)} .hist small,.hist .go{color:var(--hist)}
+.tip{margin-top:24px;padding:14px 16px;border:2px dashed var(--accent);border-radius:16px;font-size:.95rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hi Sophia! 🌟</h1>
+  <p class="hello">Pick a page. Take your time. You can always go back.</p>
+  <ul class="list">
+    <li><a class="page phys" href="forces-quest.html"><span class="ico" aria-hidden="true">🧲</span><span><small>Physics</small><h2>Forces Quest</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page chem" href="colour-detectives.html"><span class="ico" aria-hidden="true">🎨</span><span><small>Chemistry</small><h2>Colour Detectives</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page hist" href="crown-of-england.html"><span class="ico" aria-hidden="true">👑</span><span><small>History</small><h2>Crown of England</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+  </ul>
+  <p class="tip">🔊 Every page has a <b>Read to me</b> button.</p>
+</div>
+</body>
+</html>
