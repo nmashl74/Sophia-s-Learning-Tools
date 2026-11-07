@@ -159,6 +159,17 @@ details.reminder summary{cursor:pointer;font-family:var(--f-display);font-weight
 details.reminder[open] summary{margin-bottom:10px}
 .trail{flex-wrap:wrap;gap:4px}
 .trail li{width:28px;height:28px;font-size:.8rem}
+.trail li.brk{flex-basis:100%;height:0;border:0;background:none}
+.trail li.lrn{border-style:dashed}
+.sum{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px}
+.sum .box{display:grid;justify-items:center;background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:6px 8px;font-weight:600;font-size:.8rem}
+.sum .box.res{border-color:var(--good);background:var(--good-soft)}
+.sum .e{font-size:1.5rem}
+.sum b{font-family:var(--f-display);font-size:1.3rem;color:var(--accent)}
+.tbl{border-collapse:collapse;width:100%;max-width:420px;margin:0 auto;font-size:.95rem}
+.tbl caption{font-weight:600;margin-bottom:6px}
+.tbl th,.tbl td{border:2px solid var(--line);padding:8px 12px;text-align:left}
+.tbl th{background:var(--accent-soft)}
 .scorebox{display:grid;justify-items:center;background:var(--good-soft);border:2px solid var(--good);border-radius:18px;padding:12px 28px}
 .scorebox .n{font-family:var(--f-display);font-size:2.4rem;font-weight:700;color:var(--good);line-height:1.1}
 </style>
@@ -180,11 +191,12 @@ details.reminder[open] summary{margin-bottom:10px}
   </div>
   <details class="grownup">
     <summary>For grown-ups</summary>
-    <p>A self-test on 7Ea Mixtures and separation (textbook pp.5–9): p.5 intro, Forensic science (STEM) pp.6–7 and Mixtures pp.8–9. It uses the book's bold words. Reminders are hidden behind a 💡 button, so she tries first. Wrong answers give a hint, never the answer.</p>
+    <p>A self-test on 7Ea Mixtures and separation (textbook pp.5–9): p.5 intro, Forensic science (STEM) pp.6–7 and Mixtures pp.8–9. It uses the book's bold words. Four short "Learn" pages (A–D) recap the ideas first, each with one check question. Reminders are hidden behind a 💡 button, so she tries first. Wrong answers give a hint, never the answer.</p>
     <ul>
+      <li>Learn: A solids, liquids, gases; pure vs mixture. B solution, suspension, colloid. C sieve, filtration, residue, filtrate. D method, apparatus, results; heating kit.</li>
       <li>Q1 solids, liquids, gases; dissolve. Q2 pure vs mixture; transparent vs opaque. Q3 soluble vs insoluble. Q4 solution, suspension, colloid. Q5 true or false on mixture types. Q6 story: solution then suspension.</li>
       <li>Q7 heating apparatus (beaker, gauze, tripod, Bunsen burner). Q8 sieve vs filter paper. Q9 filtering steps; residue; method, apparatus, results. Q10 filtrate; dissolved salt passes through; insoluble; dispersed.</li>
-      <li>The finish page shows how many of 42 items she got right first time. It is not saved; note it down if you want to track progress.</li>
+      <li>The finish page shows how many of 42 test items (the Learn checks don't count) she got right first time. It is not saved; note it down if you want to track progress.</li>
     </ul>
     <p>The plain-words meanings of suspension and colloid are ours; worth a quick check against p.9. Questions are our own, not the textbook's. Memory tricks are ours, not the school's.</p>
   </details>
@@ -266,6 +278,74 @@ const defs={
   results:"What you find out from your experiment."
 };
 const hooks={};
+const sum=(a,b,c)=>`<div class="sum" aria-label="${a[1]} plus ${b[1]} makes ${c[1]}"><span class="box"><span class="e">${a[0]}</span>${a[1]}</span><b>+</b><span class="box"><span class="e">${b[0]}</span>${b[1]}</span><b>=</b><span class="box res"><span class="e">${c[0]}</span>${c[1]}</span></div>`;
+function filterPic(){
+  return `<svg viewBox="0 0 260 230" role="img" aria-label="Filter funnel with filter paper over a beaker. Sand stays in the paper. Clear liquid drips into the beaker.">
+    <path d="M60 30 L200 30 L140 110 L140 140 L120 140 L120 110 Z" fill="var(--card)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M75 38 L185 38 L134 104 L126 104 Z" fill="var(--paper,#fff)" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 3"/>
+    <path d="M100 82 Q130 70 160 82 L134 104 L126 104 Z" fill="#B8894A"/>
+    <circle cx="130" cy="156" r="4" fill="#7FB8E8"/><circle cx="130" cy="172" r="3" fill="#7FB8E8"/>
+    <path d="M85 150 L85 220 L175 220 L175 150" fill="none" stroke="var(--ink)" stroke-width="3"/>
+    <rect x="88" y="190" width="84" height="28" fill="#7FB8E8" opacity=".6"/>
+    <g font-family="Fredoka,sans-serif" font-size="15" font-weight="600" fill="var(--accent)"><text x="168" y="70">residue</text><text x="180" y="206">filtrate</text></g>
+  </svg>`;
+}
+const learnScenes=[
+ { tag:"Learn A", learn:true, title:"What is a mixture?",
+   say:"Let's remember first. Things can be solids, liquids or gases. A pure substance is just one thing. A mixture is two or more things mixed, but not joined. Quick check question.",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">🪨</span><span>Things can be ${kw("solids")}, ${kw("liquid","liquids")} or ${kw("gases")}.</span></li>
+     <li><span class="ico">💎</span><span>${kw("pure","Pure")}: just <b>one</b> substance.</span></li>
+     <li><span class="ico">🥗</span><span>${kw("mixture","Mixture")}: <b>two or more</b> things mixed, but not joined.</span></li>
+   </ul>
+   ${sum(["💧","water"],["🧂","salt"],["🌊","a mixture"])}
+   <div class="cards">${qcard("ra-0","🍹","Orange squash is…",[["p","pure"],["m","a mixture"]],"m","Water, sugar, orange flavour… one thing or many?")}</div>`},
+
+ { tag:"Learn B", learn:true, title:"Three kinds of mixture",
+   say:"In a solution, the solid has dissolved. You can see through it. In a suspension, bits float, then sink. In a colloid, tiny bits are spread out and never sink. Remember: suspension settles, colloid stays cloudy. Quick check question.",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">🧂</span><span>${kw("solution","Solution")}: dissolved and ${kw("transparent")} (see-through).</span></li>
+     <li><span class="ico">⬇️</span><span>${kw("suspension","Suspension")}: bits float, then sink.</span></li>
+     <li><span class="ico">☁️</span><span>${kw("colloid","Colloid")}: tiny bits ${kw("dispersed","spread out")}. Often ${kw("opaque")}. They never sink.</span></li>
+   </ul>
+   <table class="tbl"><tr><th>Kind</th><th>See-through?</th><th>Bits sink?</th></tr>
+     <tr><td>🧂 solution</td><td>yes</td><td>no</td></tr>
+     <tr><td>⬇️ suspension</td><td>no</td><td>yes</td></tr>
+     <tr><td>☁️ colloid</td><td>no</td><td>no</td></tr></table>
+   <div class="mnemonic"><b>Memory trick 🩰</b><p><b>S</b>uspension <b>S</b>ettles, like dancers <b>S</b>itting down. <b>C</b>olloid stays <b>C</b>loudy.</p></div>
+   <div class="cards">${qcard("rb-0","🧂","Can you see through a solution?",[["y","Yes"],["n","No"]],"y","Look at the table: solution, see-through?")}</div>`},
+
+ { tag:"Learn C", learn:true, title:"Separating mixtures",
+   say:"A sieve catches big bits. Filter paper catches tiny bits. In filtration, the residue stays in the paper and the filtrate drips through. Remember: Residue Rests, Filtrate Falls. Quick check question.",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">🕳️</span><span>A ${kw("sieve")} catches big bits. ${kw("filters","Filters")} catch tiny bits.</span></li>
+     <li><span class="ico">🧻</span><span>${kw("filtration","Filtration")} takes an ${kw("insoluble")} solid out of a liquid.</span></li>
+     <li><span class="ico">💧</span><span>The ${kw("residue")} stays in the paper. The ${kw("filtrate")} drips through.</span></li>
+   </ul>
+   <div class="figure">${filterPic()}<span class="cap">Filtering muddy water.</span></div>
+   <div class="mnemonic"><b>Memory trick 🎵</b><p><b>R</b>esidue <b>R</b>ests. <b>F</b>iltrate <b>F</b>alls.</p></div>
+   <div class="cards">${qcard("rc-0","🟤","The residue…",[["s","stays in the paper"],["d","drips through"]],"s","Residue R…")}</div>`},
+
+ { tag:"Learn D", learn:true, title:"Working like a scientist",
+   say:"Forensic scientists follow a method, use apparatus and write down their results. To heat things, we use a Bunsen burner, a tripod, a gauze and a beaker. Quick check question.",
+   body:()=>`
+   <ul class="points">
+     <li><span class="ico">📋</span><span>${kw("method","Method")}: the steps you follow.</span></li>
+     <li><span class="ico">🫗</span><span>${kw("apparatus","Apparatus")}: the equipment you use.</span></li>
+     <li><span class="ico">🔎</span><span>${kw("results","Results")}: what you find out.</span></li>
+   </ul>
+   <table class="tbl"><caption>Heating kit, from top to bottom</caption>
+     <tr><td>🧪 beaker</td><td>holds the liquid</td></tr>
+     <tr><td>🕸️ gauze</td><td>flat mesh the beaker sits on</td></tr>
+     <tr><td>🔺 tripod</td><td>three legs</td></tr>
+     <tr><td>🔥 Bunsen burner</td><td>makes the flame</td></tr></table>
+   <div class="cards">${qcard("rd-0","🧪","A beaker is part of the…",[["m","method"],["a","apparatus"],["r","results"]],"a","Is a beaker a step, a piece of equipment, or something you found out?")}</div>
+   <div class="think">⭐ Great remembering! Now the 10 test questions. You can still tap 💡 if you get stuck.</div>`}
+];
+
 const remind=pts=>`<details class="reminder"><summary>💡 Stuck? Tap for a reminder</summary><ul class="points">${pts.map(p=>`<li><span class="ico">${p[0]}</span><span>${p[1]}</span></li>`).join("")}</ul></details>`;
 function kitPic(){
   return `<svg viewBox="0 0 280 250" role="img" aria-label="Heating kit: a beaker sits on a gauze. The gauze sits on a tripod. A Bunsen burner is under the tripod. Labels A to D.">
@@ -292,7 +372,7 @@ const filterSteps=[
   ["🟤 Pour in the muddy water.","Paper and funnel are in place. Now add the…?"],
   ["⏳ Wait. Mud stays in the paper. Clean water drips through.","This is the very end."]
 ];
-const scenes=[
+const scenes=[...learnScenes,
  { tag:"Question 1", title:"Solid, liquid or gas?",
    say:"Have a go first. If you get stuck, tap the reminder. Question: is it a solid, a liquid or a gas?",
    body:()=>`
@@ -427,7 +507,7 @@ const scenes=[
 
  { tag:"Finish", title:"Test complete!", say:"Well done! You finished the whole test. Here are the words you used.",
    body:()=>{
-     const tot=Object.keys(score).length, first=Object.values(score).filter(v=>v).length;
+     const ks=Object.keys(score).filter(k=>k[0]!=="r"), tot=ks.length, first=ks.filter(k=>score[k]).length;
      return `
    <div class="finish">
      <div class="big-stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
@@ -449,8 +529,10 @@ function render(){
     <div class="scene-head"><div><span class="tag">${s.tag}</span><h2 id="st">${s.title}</h2></div>
     ${canSpeak?`<button type="button" class="say-btn" id="say" aria-pressed="false">🔊 Read to me</button>`:""}</div>
     ${s.body()}</section>`;
+  if(cur===scenes.length-1) setTimeout(markDone,0);
   if(s.after) s.after();
-  trail.innerHTML=scenes.map((x,i)=>`<li class="${i<cur?"done":""} ${i===cur?"on":""}" aria-current="${i===cur?"step":"false"}">${i===scenes.length-1?"★":i+1}</li>`).join("");
+  const nL=scenes.filter(x=>x.learn).length;
+  trail.innerHTML=scenes.map((x,i)=>`<li class="${x.learn?"lrn":""} ${i<cur?"done":""} ${i===cur?"on":""}" aria-current="${i===cur?"step":"false"}">${x.learn?x.tag.slice(-1):(i===scenes.length-1?"★":i+1-nL)}</li>${i===nL-1?'<li class="brk" aria-hidden="true"></li>':""}`).join("");
   $("#back").disabled=cur===0; $("#next").hidden=cur===scenes.length-1;
   updateNext(); window.scrollTo({top:0,behavior:reduce?"auto":"smooth"});
 }
@@ -498,6 +580,24 @@ function speak(){
 }
 $("#next").addEventListener("click",()=>{if(cur<scenes.length-1){cur++;render();}});
 $("#back").addEventListener("click",()=>{if(cur>0){cur--;render();}});
+/* progress: remember finished pages on this phone, and let her tell a grown-up */
+let logged=false;
+function finishScore(){try{if(typeof score==="undefined")return "";const ks=Object.keys(score).filter(k=>k[0]!=="r");return ks.length?ks.filter(k=>score[k]).length+"/"+ks.length:"";}catch(e){return ""}}
+function markDone(){
+  const s=finishScore(), page=location.pathname.split("/").pop()||"";
+  if(!logged){logged=true;
+    try{const L=JSON.parse(localStorage.getItem("sophia-log")||"[]");L.push({p:page,t:document.title,at:new Date().toISOString(),s});localStorage.setItem("sophia-log",JSON.stringify(L.slice(-300)));}catch(e){}
+  }
+  const f=document.querySelector("#stage .finish"); if(!f||f.querySelector(".tell"))return;
+  f.insertAdjacentHTML("beforeend",`<button type="button" class="btn next tell">📨 Tell a grown-up I finished</button><p class="fb tellfb" aria-live="polite"></p>`);
+  f.querySelector(".tell").addEventListener("click",async()=>{
+    const d=new Date().toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    const msg=`🌟 Sophia finished "${document.title}" on ${d}.`+(s?` Score: ${s} right first time.`:"");
+    const fb=f.querySelector(".tellfb");
+    try{if(navigator.share){await navigator.share({text:msg});fb.className="fb good tellfb";fb.textContent="✅ Sent! Well done.";return;}}catch(e){if(e&&e.name==="AbortError")return;}
+    try{await navigator.clipboard.writeText(msg);fb.className="fb good tellfb";fb.textContent="✅ Copied! Paste it into a message to a grown-up.";}catch(e){fb.className="fb tellfb";fb.textContent=msg;}
+  });
+}
 render();
 })();
 

@@ -52,6 +52,12 @@ h1{font-size:2rem;text-wrap:balance}
 .sec{font-size:1.2rem;margin:22px 0 10px;color:var(--muted)}
 .bio{border-color:var(--bio)} .bio .ico{background:var(--bio-soft)} .bio small,.bio .go{color:var(--bio)}
 .tip{margin-top:24px;padding:14px 16px;border:2px dashed var(--accent);border-radius:16px;font-size:.95rem}
+.done{display:inline-block;margin-top:4px;font-size:.85rem;font-weight:600;color:#1C6B40;background:#DDF3E6;border-radius:999px;padding:2px 10px}
+.log{margin-top:20px;font-size:.9rem;color:var(--muted)}
+.log summary{cursor:pointer;font-weight:600}
+.log table{border-collapse:collapse;width:100%;margin-top:8px}
+.log td,.log th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}
+.log .clear{margin-top:10px;font:inherit;border:2px solid var(--line);background:transparent;color:inherit;border-radius:10px;padding:4px 12px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -80,6 +86,29 @@ h1{font-size:2rem;text-wrap:balance}
     <li><a class="page hist" href="crown-of-england.html"><span class="ico" aria-hidden="true">👑</span><span><small>History</small><h2>Crown of England</h2></span><span class="go" aria-hidden="true">→</span></a></li>
   </ul>
   <p class="tip">🔊 Every page has a <b>Read to me</b> button. 🖨️ Printable cards: ask a grown-up.</p>
+  <details class="log" id="log"><summary>For grown-ups: what Sophia has finished</summary>
+    <p>Saved only on this phone/browser. A page counts as finished when she reaches its last page (or the video plays to the end). Tests show her first-try score.</p>
+    <div id="logbody"></div>
+  </details>
 </div>
+<script>
+(function(){
+let L=[];try{L=JSON.parse(localStorage.getItem("sophia-log")||"[]")}catch(e){}
+const fmt=iso=>new Date(iso).toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+const day=iso=>new Date(iso).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+document.querySelectorAll("a.page").forEach(a=>{
+  const p=a.getAttribute("href"), mine=L.filter(x=>x.p===p);
+  if(!mine.length)return;
+  const last=mine[mine.length-1];
+  const b=document.createElement("span"); b.className="done";
+  b.textContent="✅ "+day(last.at)+(last.s?" · "+last.s:"")+(mine.length>1?" · ×"+mine.length:"");
+  a.querySelector("h2").after(b);
+});
+const body=document.getElementById("logbody");
+if(!L.length){body.innerHTML="<p>Nothing finished yet on this phone.</p>";return;}
+body.innerHTML="<table><tr><th>When</th><th>Page</th><th>Score</th></tr>"+L.slice().reverse().map(x=>`<tr><td>${fmt(x.at)}</td><td>${String(x.t).replace(/</g,"&lt;")}</td><td>${x.s||"–"}</td></tr>`).join("")+"</table><button type=\"button\" class=\"clear\">Clear the list</button>";
+body.querySelector(".clear").addEventListener("click",()=>{if(confirm("Clear the whole list? This can't be undone.")){try{localStorage.removeItem("sophia-log")}catch(e){}location.reload();}});
+})();
+</script>
 </body>
 </html>

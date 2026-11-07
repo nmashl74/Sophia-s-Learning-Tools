@@ -29,4 +29,7 @@ details{color:var(--muted);font-size:.9rem;border-top:2px dashed var(--line);pad
 const words="How does a circuit work? One. A cell, wires, a switch and a bulb make one loop. Two. The cell pushes charges round the loop. This flow is called current. Three. Charges pick up energy at the cell, and drop it off at the bulb. Four. Open the switch. Now there is a gap. No complete loop means no current. Light off! Five. Ammeters measure current. It's the same everywhere in the loop. Remember: complete loop equals light!";
 document.getElementById("say").addEventListener("click",()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(words);u.lang="en-GB";u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}});
 </script>
+<script>
+try{document.getElementById("v").addEventListener("ended",()=>{try{const L=JSON.parse(localStorage.getItem("sophia-log")||"[]");L.push({p:"how-a-circuit-works.html",t:document.title,at:new Date().toISOString(),s:""});localStorage.setItem("sophia-log",JSON.stringify(L.slice(-300)));}catch(e){}},{once:true});}catch(e){}
+</script>
 </body></html>

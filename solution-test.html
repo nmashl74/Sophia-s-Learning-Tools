@@ -475,6 +475,7 @@ function render(){
     <div class="scene-head"><div><span class="tag">${s.tag}</span><h2 id="st">${s.title}</h2></div>
     ${canSpeak?`<button type="button" class="say-btn" id="say" aria-pressed="false">🔊 Read to me</button>`:""}</div>
     ${s.body()}</section>`;
+  if(cur===scenes.length-1) setTimeout(markDone,0);
   if(s.after) s.after();
   const nL=scenes.filter(x=>x.learn).length;
   trail.innerHTML=scenes.map((x,i)=>`<li class="${x.learn?"lrn":""} ${i<cur?"done":""} ${i===cur?"on":""}" aria-current="${i===cur?"step":"false"}">${x.learn?x.tag.slice(-1):(i===scenes.length-1?"★":i+1-nL)}</li>${i===nL-1?'<li class="brk" aria-hidden="true"></li>':""}`).join("");
@@ -525,6 +526,24 @@ function speak(){
 }
 $("#next").addEventListener("click",()=>{if(cur<scenes.length-1){cur++;render();}});
 $("#back").addEventListener("click",()=>{if(cur>0){cur--;render();}});
+/* progress: remember finished pages on this phone, and let her tell a grown-up */
+let logged=false;
+function finishScore(){try{if(typeof score==="undefined")return "";const ks=Object.keys(score).filter(k=>k[0]!=="r");return ks.length?ks.filter(k=>score[k]).length+"/"+ks.length:"";}catch(e){return ""}}
+function markDone(){
+  const s=finishScore(), page=location.pathname.split("/").pop()||"";
+  if(!logged){logged=true;
+    try{const L=JSON.parse(localStorage.getItem("sophia-log")||"[]");L.push({p:page,t:document.title,at:new Date().toISOString(),s});localStorage.setItem("sophia-log",JSON.stringify(L.slice(-300)));}catch(e){}
+  }
+  const f=document.querySelector("#stage .finish"); if(!f||f.querySelector(".tell"))return;
+  f.insertAdjacentHTML("beforeend",`<button type="button" class="btn next tell">📨 Tell a grown-up I finished</button><p class="fb tellfb" aria-live="polite"></p>`);
+  f.querySelector(".tell").addEventListener("click",async()=>{
+    const d=new Date().toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    const msg=`🌟 Sophia finished "${document.title}" on ${d}.`+(s?` Score: ${s} right first time.`:"");
+    const fb=f.querySelector(".tellfb");
+    try{if(navigator.share){await navigator.share({text:msg});fb.className="fb good tellfb";fb.textContent="✅ Sent! Well done.";return;}}catch(e){if(e&&e.name==="AbortError")return;}
+    try{await navigator.clipboard.writeText(msg);fb.className="fb good tellfb";fb.textContent="✅ Copied! Paste it into a message to a grown-up.";}catch(e){fb.className="fb tellfb";fb.textContent=msg;}
+  });
+}
 render();
 })();
 
