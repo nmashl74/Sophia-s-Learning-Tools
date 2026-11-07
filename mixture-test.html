@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mixture Test</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+[hidden]{display:none!important}
+/* Layout: one "scene" at a time, like a storybook page, with a progress trail of stars on top */
+:root{
+  --bg:#F6F4FB; --card:#FFFFFF; --ink:#23263F; --muted:#5A5D7C; --line:#DCD7EC;
+  --accent:#8A3FA0; --accent-soft:#F1E4F6;
+  --contact:#D9622B; --contact-soft:#FDEBDD;
+  --gap:#3563C9; --gap-soft:#E3EBFB;
+  --good:#23824F; --good-soft:#DDF3E6; --try:#B4441A; --try-soft:#FDE8DD;
+  --star:#E9A800;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Lexend","Verdana",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --contact:#F29A68; --contact-soft:#3B2A22;
+  --gap:#8FB0F5; --gap-soft:#23304F;
+  --good:#6FD39B; --good-soft:#1F3A2C; --try:#F59E6B; --try-soft:#40281D;
+  --star:#FFC933; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
+  --accent:#D49BE6; --accent-soft:#352A45;
+  --contact:#F29A68; --contact-soft:#3B2A22;
+  --gap:#8FB0F5; --gap-soft:#23304F;
+  --good:#6FD39B; --good-soft:#1F3A2C; --try:#F59E6B; --try-soft:#40281D;
+  --star:#FFC933; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.65;letter-spacing:.02em;word-spacing:.08em}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0;letter-spacing:.01em}
+h1{font-size:1.9rem}
+h2{font-size:1.6rem}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand small{display:block;font-size:.8rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.trail{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.trail li{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);font-family:var(--f-display);font-weight:600;color:var(--muted);background:var(--card)}
+.trail li.on{border-color:var(--accent);color:var(--accent)}
+.trail li.done{background:var(--star);border-color:var(--star);color:#3a2a00}
+
+.scene{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:24px 22px;display:grid;gap:20px}
+.scene-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px}
+.say-btn{border:2px solid var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:.9rem;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.say-btn[aria-pressed="true"]{background:var(--accent);color:var(--card)}
+
+.points{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.points li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--accent-soft)}
+.points .ico{font-size:1.5rem;line-height:1.2;flex:none}
+
+.kw{border:none;background:none;padding:0 2px;font-weight:600;color:var(--accent);text-decoration:underline dotted 2px;text-underline-offset:4px}
+.def{display:block;margin-top:6px;padding:8px 12px;border-left:4px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;font-size:.95rem}
+
+.mnemonic{border:2px dashed var(--accent);border-radius:16px;padding:14px 16px;display:grid;gap:8px}
+.mnemonic .letters{display:flex;flex-wrap:wrap;gap:10px}
+.mnemonic .letters span{font-family:var(--f-display);font-size:1.15rem}
+.mnemonic b{font-size:1.5rem;color:var(--accent)}
+
+.task{display:grid;gap:12px}
+.task-title{font-family:var(--f-display);font-size:1.25rem;font-weight:600;display:flex;gap:8px;align-items:center}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.qcard{border:2px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;background:var(--card);transition:border-color .2s,background .2s}
+.qcard .what{display:flex;gap:12px;align-items:center}
+.qcard .pic{font-size:2.2rem;line-height:1;flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:var(--bg)}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 14px;min-height:44px;font-weight:500}
+.choice:hover{border-color:var(--accent)}
+.qcard.right{border-color:var(--good);background:var(--good-soft)}
+.qcard.wrong{animation:wob .35s}
+.fb{font-size:.95rem;min-height:0}
+.fb.good{color:var(--good);font-weight:600}
+.fb.try{color:var(--try);font-weight:600}
+@keyframes wob{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* sorting baskets */
+.baskets{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.basket{border-radius:16px;padding:12px;min-height:110px;display:flex;flex-direction:column;gap:8px}
+.basket h3{font-size:1.1rem;display:flex;gap:6px;align-items:center}
+.basket p.hint{font-size:.85rem;color:var(--muted)}
+.basket.touch{background:var(--contact-soft);border:2px solid var(--contact)}
+.basket.gapb{background:var(--gap-soft);border:2px solid var(--gap)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border-radius:999px;padding:4px 12px;font-size:.9rem;font-weight:600;background:var(--card)}
+.touch .chip{border:2px solid var(--contact)}
+.gapb .chip{border:2px solid var(--gap)}
+.choice.c-touch{border-color:var(--contact)}
+.choice.c-gap{border-color:var(--gap)}
+@media (max-width:480px){.baskets{grid-template-columns:1fr}}
+
+/* force meter */
+.meter{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start}
+.meter svg{width:150px;height:auto;max-width:100%}
+.toys{display:grid;gap:8px}
+.toy{display:flex;gap:10px;align-items:center;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:8px 12px;min-height:52px}
+.toy[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.toy .e{font-size:1.7rem}
+.toy small{display:block;color:var(--muted);font-size:.85rem}
+.reading{font-family:var(--f-display);font-size:1.4rem;font-variant-numeric:tabular-nums}
+@media (max-width:480px){.meter{grid-template-columns:1fr;justify-items:center}.toys{width:100%}}
+
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
+.btn{border:none;border-radius:14px;padding:12px 22px;font-family:var(--f-display);font-size:1.15rem;font-weight:600;min-height:52px}
+.btn.next{background:var(--accent);color:var(--card)}
+.btn.back{background:transparent;border:2px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.locked-note{font-size:.9rem;color:var(--muted);text-align:right}
+
+.finish{text-align:center;display:grid;gap:16px;justify-items:center}
+.big-stars{font-size:2.6rem;letter-spacing:.2em}
+.wordbank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.wordbank span{background:var(--accent-soft);border-radius:999px;padding:6px 14px;font-weight:500}
+
+details.grownup{margin-top:24px;border-top:2px dashed var(--line);padding-top:14px;font-size:.9rem;color:var(--muted)}
+details.grownup summary{cursor:pointer;font-weight:600}
+details.grownup ul{padding-left:20px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* shared extras */
+.basket.ba{background:var(--contact-soft);border:2px solid var(--contact)}
+.basket.bb{background:var(--gap-soft);border:2px solid var(--gap)}
+.ba .chip{border:2px solid var(--contact)}
+.bb .chip{border:2px solid var(--gap)}
+.choice.c-a{border-color:var(--contact)}
+.choice.c-b{border-color:var(--gap)}
+.order-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.order-list li{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:12px;background:var(--good-soft)}
+.order-list .num{font-family:var(--f-display);font-weight:600;color:var(--good);min-width:1.4em}
+.steps-pool{display:grid;gap:8px}
+.steps-pool .choice{text-align:left}
+.think{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 14px 14px 0;padding:12px 14px}
+.home{display:inline-block;margin-bottom:10px;font-family:var(--f-display);font-weight:600;color:var(--accent);text-decoration:none}
+.figure{display:grid;justify-items:center;gap:6px}
+.figure svg{width:100%;max-width:360px;height:auto}
+.figure .cap{font-size:.9rem;color:var(--muted);text-align:center}
+:root{--paper:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#F2EFF8}}
+:root[data-theme="dark"]{--paper:#F2EFF8}
+
+details.reminder{border:2px dashed var(--accent);border-radius:16px;padding:10px 14px}
+details.reminder summary{cursor:pointer;font-family:var(--f-display);font-weight:600;color:var(--accent);min-height:32px}
+details.reminder[open] summary{margin-bottom:10px}
+.scorebox{display:grid;justify-items:center;background:var(--good-soft);border:2px solid var(--good);border-radius:18px;padding:12px 28px}
+.scorebox .n{font-family:var(--f-display);font-size:2.4rem;font-weight:700;color:var(--good);line-height:1.1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="home" href="index.html">🏠 All my pages</a>
+  <header class="top">
+    <div class="brand"><div><small>Chemistry · 7Ea test</small><h1>Mixture Test</h1></div></div>
+    <ol class="trail" id="trail" aria-label="Progress"></ol>
+  </header>
+  <main id="stage"></main>
+  <div class="nav">
+    <button class="btn back" id="back" type="button">← Back</button>
+    <div style="display:grid;gap:4px;justify-items:end">
+      <button class="btn next" id="next" type="button">Next →</button>
+      <span class="locked-note" id="lockNote"></span>
+    </div>
+  </div>
+  <details class="grownup">
+    <summary>For grown-ups</summary>
+    <p>A self-test on 7Ea Mixtures and separation (textbook pp.5–9): p.5 intro, Forensic science (STEM) pp.6–7 and Mixtures pp.8–9. It uses the book's bold words. Reminders are hidden behind a 💡 button, so she tries first. Wrong answers give a hint, never the answer.</p>
+    <ul>
+      <li>Q1: solids, liquids, gases; dissolve. Q2: pure vs mixture; transparent vs opaque. Q3: solution, suspension, colloid. Q4: heating apparatus (beaker, gauze, tripod, Bunsen burner); sieve vs filter. Q5: filtering steps; residue; method, apparatus, results.</li>
+      <li>The finish page shows how many of 21 items she got right first time. It is not saved; note it down if you want to track progress.</li>
+    </ul>
+    <p>The plain-words meanings of suspension and colloid are ours; worth a quick check against p.9. Questions are our own, not the textbook's. Memory tricks are ours, not the school's.</p>
+  </details>
+</div>
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const kw=(w,label)=>`<button type="button" class="kw" data-kw="${w}">${label||w}</button>`;
+const score={};
+const esc=t=>String(t).replace(/"/g,'&quot;');
+function qcard(id,pic,text,opts,ans,hint,why){
+  return `<div class="qcard" data-id="${id}" data-ans="${ans}" data-hint="${esc(hint)}"${why?` data-why="${esc(why)}"`:""}>
+    <div class="what"><span class="pic" aria-hidden="true">${pic}</span><span>${text}</span></div>
+    <div class="choices">${opts.map(o=>`<button type="button" class="choice" data-v="${o[0]}">${o[1]}</button>`).join("")}</div>
+    <p class="fb" aria-live="polite"></p></div>`;
+}
+let BASKETS={a:{icon:"",label:""},b:{icon:"",label:""}};
+function baskets(a,b){
+  BASKETS={a,b};
+  return `<div class="baskets">
+    <div class="basket ba"><h3>${a.icon} ${a.label}</h3>${a.hint?`<p class="hint">${a.hint}</p>`:""}<div class="chips" id="bk-a"></div></div>
+    <div class="basket bb"><h3>${b.icon} ${b.label}</h3>${b.hint?`<p class="hint">${b.hint}</p>`:""}<div class="chips" id="bk-b"></div></div>
+  </div>`;
+}
+function sortCard(id,pic,chip,text,ans,hint){
+  return `<div class="qcard sort" data-id="${id}" data-ans="${ans}" data-chip="${esc(chip)}" data-hint="${esc(hint)}">
+    <div class="what"><span class="pic" aria-hidden="true">${pic}</span><span>${text}</span></div>
+    <div class="choices"><button type="button" class="choice c-a" data-v="a">${BASKETS.a.icon} ${BASKETS.a.short||BASKETS.a.label}</button><button type="button" class="choice c-b" data-v="b">${BASKETS.b.icon} ${BASKETS.b.short||BASKETS.b.label}</button></div>
+    <p class="fb" aria-live="polite"></p></div>`;
+}
+function orderTask(id,title){
+  return `<div class="task qcard order" data-id="${id}">
+    <div class="task-title">${title}</div>
+    <ol class="order-list"></ol><div class="steps-pool"></div><p class="fb" aria-live="polite"></p></div>`;
+}
+function initOrder(id,steps){
+  const card=stage.querySelector(`[data-id="${id}"]`), pool=card.querySelector(".steps-pool"), done=card.querySelector(".order-list"), fb=card.querySelector(".fb");
+  let next=0;
+  const sh=steps.map((s,i)=>[s,i]).sort(()=>Math.random()-.5);
+  if(sh[0][1]===0) sh.push(sh.shift());
+  pool.innerHTML=sh.map(([s,i])=>`<button type="button" class="choice ostep" data-i="${i}">${s[0]}</button>`).join("");
+  pool.addEventListener("click",e=>{
+    const b=e.target.closest(".ostep"); if(!b) return;
+    if(+b.dataset.i===next){
+      done.insertAdjacentHTML("beforeend",`<li><span class="num">${next+1}</span><span>${steps[next][0]}</span></li>`);
+      b.remove(); next++;
+      fb.className="fb good"; fb.textContent=next<steps.length?"✅ Yes! What comes next?":"✅ Perfect order! Great thinking.";
+      if(next===steps.length){card.classList.add("right");if(!(id in score))score[id]=!card.dataset.missed;updateNext();}
+    }else{
+      card.dataset.missed="1"; card.classList.remove("wrong"); void card.offsetWidth; card.classList.add("wrong");
+      fb.className="fb try"; fb.textContent="Good try! Hint: "+steps[next][1];
+    }
+  });
+}
+const defs={
+  solids:"Things that keep their shape, like sand or a stone.",
+  liquid:"Something that flows and takes the shape of its container, like water.",
+  gases:"Things that spread out to fill any space, like air.",
+  dissolve:"Break up into tiny bits and mix into a liquid, like sugar in tea.",
+  "carbon dioxide":"A gas. It makes the fizz in fizzy drinks. We breathe it out.",
+  pure:"Only one substance, with nothing else mixed in.",
+  mixture:"Two or more substances mixed together, but not joined.",
+  transparent:"See-through. Light passes through it.",
+  opaque:"Not see-through. You can't see through it.",
+  solution:"A solid dissolved in a liquid. It is see-through.",
+  suspension:"Bits of solid floating in a liquid. Leave it, and the bits sink.",
+  colloid:"Tiny bits spread out in a liquid. They never sink, like in milk.",
+  dispersed:"Spread out all through something.",
+  sieve:"A mesh with holes. It catches big bits and lets small bits through.",
+  filters:"Things that let a liquid through but catch tiny solid bits.",
+  filtration:"Separating an insoluble solid from a liquid using filter paper.",
+  insoluble:"Will not dissolve, like sand in water.",
+  residue:"The solid that stays in the filter paper.",
+  filtrate:"The liquid that drips through the filter paper.",
+  method:"The steps you follow in an experiment, in order.",
+  apparatus:"The equipment you use, like a beaker or funnel.",
+  results:"What you find out from your experiment."
+};
+const hooks={};
+const remind=pts=>`<details class="reminder"><summary>💡 Stuck? Tap for a reminder</summary><ul class="points">${pts.map(p=>`<li><span class="ico">${p[0]}</span><span>${p[1]}</span></li>`).join("")}</ul></details>`;
+function kitPic(){
+  return `<svg viewBox="0 0 280 250" role="img" aria-label="Heating kit: a beaker sits on a gauze. The gauze sits on a tripod. A Bunsen burner is under the tripod. Labels A to D.">
+    <path d="M110 30 L110 92 L170 92 L170 30" fill="none" stroke="var(--ink)" stroke-width="3"/>
+    <rect x="113" y="60" width="54" height="30" fill="#7FB8E8" opacity=".6"/>
+    <rect x="88" y="94" width="104" height="8" rx="2" fill="var(--muted)" opacity=".7"/>
+    <path d="M92 104 L80 220 M188 104 L200 220 M140 104 L140 214" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+    <rect x="88" y="102" width="104" height="5" fill="var(--ink)"/>
+    <rect x="130" y="160" width="20" height="52" fill="var(--muted)"/>
+    <rect x="116" y="210" width="48" height="12" rx="3" fill="var(--ink)"/>
+    <path d="M140 122 Q130 140 140 158 Q150 140 140 122 Z" fill="#3D7BE0"/>
+    <g font-family="Fredoka,sans-serif" font-size="22" font-weight="700" fill="var(--accent)">
+      <text x="225" y="62">A</text><text x="225" y="104">B</text><text x="235" y="190">C</text><text x="30" y="200">D</text>
+    </g>
+    <g stroke="var(--accent)" stroke-width="2">
+      <line x1="220" y1="56" x2="172" y2="64"/><line x1="220" y1="98" x2="194" y2="98"/><line x1="230" y1="184" x2="196" y2="184"/><line x1="48" y1="194" x2="128" y2="190"/>
+    </g>
+  </svg>`;
+}
+const kitOpts=[["beaker","beaker"],["gauze","gauze"],["tripod","tripod"],["bunsen","Bunsen burner"]];
+const filterSteps=[
+  ["📄 Fold the filter paper into a cone.","You need the paper ready first. What shape does it go in the funnel?"],
+  ["🫗 Put the paper in a funnel, over a beaker.","The paper is ready. Where does it go?"],
+  ["🟤 Pour in the muddy water.","Paper and funnel are in place. Now add the…?"],
+  ["⏳ Wait. Mud stays in the paper. Clean water drips through.","This is the very end."]
+];
+const scenes=[
+ { tag:"Question 1", title:"Solid, liquid or gas?",
+   say:"Have a go first. If you get stuck, tap the reminder. Question: is it a solid, a liquid or a gas?",
+   body:()=>`
+   ${remind([["🪨",`${kw("solids","Solids")} keep their shape.`],["💧",`A ${kw("liquid")} flows.`],["🫧",`${kw("gases","Gases")} spread out to fill any space.`]])}
+   <div class="cards">
+     ${qcard("q1-0","⏳","Sand",[["s","solid"],["l","liquid"],["g","gas"]],"s","Does sand keep its own shape when you pick up one grain?")}
+     ${qcard("q1-1","🥤",`${kw("carbon dioxide","Carbon dioxide")}, the fizz in a fizzy drink`,[["s","solid"],["l","liquid"],["g","gas"]],"g","It makes bubbles. What is inside a bubble?")}
+     ${qcard("q1-2","🫖","You stir sugar into tea. It seems to vanish. Where did it go?",[["a","It is gone for ever"],["b","It broke into tiny bits all through the tea"],["c","It turned into a gas"]],"b",`Think of the word ${"“dissolve”"}. Can you still taste the sugar?`)}
+   </div>`},
+
+ { tag:"Question 2", title:"Pure? See-through?",
+   say:"Two quick sorts. Is it pure or a mixture? Then, can you see through it?",
+   body:()=>`
+   ${remind([["💎",`${kw("pure","Pure")}: just <b>one</b> substance.`],["🥗",`${kw("mixture","Mixture")}: <b>two or more</b> things mixed.`],["🪟",`${kw("transparent","Transparent")} = see-through. ${kw("opaque","Opaque")} = not see-through.`]])}
+   <div class="task">
+     <div class="task-title">Pure or mixture? Tap a basket.</div>
+     ${baskets({icon:"💎",label:"Pure",hint:"Just one thing"},{icon:"🥗",label:"Mixture",hint:"Two or more things"})}
+     <div class="cards">${[
+       ["🍋","Lemonade","Lemonade","b","Water, sugar, lemon, bubbles… one thing or many?"],
+       ["🧂","A jar of pure salt","A jar of pure salt, nothing added","a","Read the label: nothing added."],
+       ["🎨","Paint water","Water you rinsed your paintbrush in","b","Water plus paint. How many things?"]
+     ].map((c,i)=>sortCard(`q2-${i}`,c[0],c[1],c[2],c[3],c[4])).join("")}</div>
+   </div>
+   <div class="cards">
+     ${qcard("q2-3","🥛","A glass of milk. Can you read a book through it?",[["t","transparent"],["o","opaque"]],"o","If you can't see through it, which word is that?")}
+     ${qcard("q2-4","🫙","A glass of salty water. Can you see through it?",[["t","transparent"],["o","opaque"]],"t","“Trans” can mean “through”.")}
+   </div>`},
+
+ { tag:"Question 3", title:"Solution, suspension or colloid?",
+   say:"Three kinds of mixture. Is it a solution, a suspension or a colloid? Remember: suspension settles, colloid stays cloudy.",
+   body:()=>`
+   ${remind([["🧂",`${kw("solution","Solution")}: dissolved. You can see through it.`],["⬇️",`${kw("suspension","Suspension")}: bits float, then sink to the bottom.`],["☁️",`${kw("colloid","Colloid")}: tiny bits ${kw("dispersed","spread out")}. They never sink.`]])}
+   <div class="mnemonic"><b>Memory trick 🩰</b><p><b>S</b>uspension <b>S</b>ettles, like dancers <b>S</b>itting down. <b>C</b>olloid stays <b>C</b>loudy.</p></div>
+   <div class="cards">
+     ${qcard("q3-0","✨","Craft glitter shaken in water. After a while it all sinks.",[["sol","solution"],["sus","suspension"],["col","colloid"]],"sus","It sinks. Which one settles?")}
+     ${qcard("q3-1","🍬","Sugar stirred into water until clear.",[["sol","solution"],["sus","suspension"],["col","colloid"]],"sol","The sugar dissolved and you can see through it.")}
+     ${qcard("q3-2","🥛","Milk. Tiny drops are spread through it and never sink.",[["sol","solution"],["sus","suspension"],["col","colloid"]],"col","It stays cloudy for ever. Use the memory trick!")}
+   </div>`},
+
+ { tag:"Question 4", title:"Kit check",
+   say:"Look at the heating kit. Name the parts A, B, C and D. Then help Cinderella.",
+   body:()=>`
+   ${remind([["🧪","The beaker holds the liquid."],["🕸️","The wire gauze is a flat mesh. The beaker sits on it."],["🔥","The tripod has three legs. The Bunsen burner goes under it."]])}
+   <div class="figure">${kitPic()}<span class="cap">Kit for heating a liquid.</span></div>
+   <div class="cards">
+     ${qcard("q4-0","🅰️","What is A?",kitOpts,"beaker","It holds the liquid.")}
+     ${qcard("q4-1","🅱️","What is B?",kitOpts,"gauze","The flat mesh the beaker sits on.")}
+     ${qcard("q4-2","©️","What is C?",kitOpts,"tripod","Count its legs. “Tri” means three.")}
+     ${qcard("q4-3","🇩","What is D?",kitOpts,"bunsen","It makes the flame.")}
+     ${qcard("q4-4","👑","Cinderella must get dried peas out of a pile of flour. Fastest tool?",[["sv","a sieve"],["fp","filter paper"]],"sv",`Peas are big. Flour is fine. Which one has holes you can shake?`)}
+   </div>`},
+
+ { tag:"Question 5", title:"Detective Badger's case",
+   say:"Detective Badger found muddy water on the palace steps. She filters it to look at the mud. Put her steps in order. Then answer the questions.",
+   body:()=>`
+   <div class="think">🦡 Detective Badger found muddy water on the palace steps. She filters it to study the mud.</div>
+   ${remind([["🧻",`${kw("filtration","Filtration")} separates an ${kw("insoluble")} solid from a liquid.`],["📋",`${kw("method","Method")} = the steps. ${kw("apparatus","Apparatus")} = the equipment.`],["🔎",`${kw("results","Results")} = what you find out.`]])}
+   ${orderTask("q5-order","Put the steps in order. Tap step 1 first.")}
+   <div class="cards">
+     ${qcard("q5-0","🟤","The mud left in the filter paper is the…",[["r","residue"],["f","filtrate"]],"r","Remember: Residue Rests, Filtrate Falls.")}
+     ${qcard("q5-1","📋","Badger's list of steps is her…",[["m","method"],["a","apparatus"],["r","results"]],"m","Which word means the steps you follow?")}
+     ${qcard("q5-2","🫗","The funnel and beaker are her…",[["m","method"],["a","apparatus"],["r","results"]],"a","Which word means the equipment?")}
+     ${qcard("q5-3","🔎","“The mud is red, like the rose garden soil.” This is her…",[["m","method"],["a","apparatus"],["r","results"]],"r","It is what she found out.")}
+   </div>`,
+   after:()=>initOrder("q5-order",filterSteps)},
+
+ { tag:"Finish", title:"Test complete!", say:"Well done! You finished the whole test. Here are the words you used.",
+   body:()=>{
+     const tot=Object.keys(score).length, first=Object.values(score).filter(v=>v).length;
+     return `
+   <div class="finish">
+     <div class="big-stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
+     <p><b>Fantastic effort!</b> You kept going right to the end.</p>
+     <div class="scorebox"><span class="n">${first} / ${tot}</span><span>right first time</span></div>
+     <p>Every hint you used and fixed is learning too. 💪</p>
+     <p>Tap a word to check what it means:</p>
+     <div class="wordbank">${["solids","liquid","gases","dissolve","pure","mixture","transparent","opaque","solution","suspension","colloid","sieve","filtration","residue","filtrate","method","apparatus","results"].map(w=>kw(w)).join("")}</div>
+     <p style="color:var(--muted)">Tell a grown-up: what's the difference between a suspension and a colloid?</p>
+   </div>`}}
+];
+
+const praise=["Yes! Great thinking.","Spot on!","Brilliant!","You got it!","Super work!"];
+let cur=0;
+const stage=$("#stage"), trail=$("#trail");
+function render(){
+  const s=scenes[cur]; stopSpeech();
+  stage.innerHTML=`<section class="scene" aria-labelledby="st">
+    <div class="scene-head"><div><span class="tag">${s.tag}</span><h2 id="st">${s.title}</h2></div>
+    ${canSpeak?`<button type="button" class="say-btn" id="say" aria-pressed="false">🔊 Read to me</button>`:""}</div>
+    ${s.body()}</section>`;
+  if(s.after) s.after();
+  trail.innerHTML=scenes.map((x,i)=>`<li class="${i<cur?"done":""} ${i===cur?"on":""}" aria-current="${i===cur?"step":"false"}">${i===scenes.length-1?"★":i+1}</li>`).join("");
+  $("#back").disabled=cur===0; $("#next").hidden=cur===scenes.length-1;
+  updateNext(); window.scrollTo({top:0,behavior:reduce?"auto":"smooth"});
+}
+function remaining(){return [...stage.querySelectorAll(".qcard")].filter(c=>!c.classList.contains("right")).length}
+function updateNext(){const left=remaining();$("#next").disabled=left>0;$("#lockNote").textContent=left>0?`${left} left to try`:"";}
+stage.addEventListener("click",e=>{
+  const k=e.target.closest(".kw"); if(k){toggleDef(k);return;}
+  const c=e.target.closest(".choice:not(.ostep)"); if(c){answer(c);return;}
+  if(e.target.closest("#say")) speak();
+});
+function toggleDef(k){
+  const nx=k.nextElementSibling;
+  if(nx&&nx.classList.contains("def")){nx.remove();return;}
+  const d=document.createElement("span"); d.className="def"; d.textContent=defs[k.dataset.kw]||""; k.after(d);
+}
+function answer(btn){
+  const card=btn.closest(".qcard"); if(!card||card.dataset.ans===undefined||card.classList.contains("right"))return;
+  const fb=card.querySelector(".fb"), any=card.dataset.ans==="*";
+  if(any||btn.dataset.v===card.dataset.ans){
+    card.classList.add("right"); fb.className="fb good"; if(!(card.dataset.id in score))score[card.dataset.id]=!card.dataset.missed;
+    fb.textContent=any?(card.dataset.why||"✅ Thank you for choosing."):("✅ "+praise[Math.floor(Math.random()*praise.length)]+(card.dataset.why?" "+card.dataset.why:""));
+    card.querySelectorAll(".choice").forEach(b=>{b.disabled=true;if(b!==btn)b.style.opacity=.4});
+    if(card.classList.contains("sort")){
+      const chip=document.createElement("span"); chip.className="chip"; chip.textContent=card.dataset.chip;
+      $("#bk-"+card.dataset.ans).appendChild(chip);
+    }
+    if(card.dataset.on) (hooks[card.dataset.on]||(()=>{}))(btn.dataset.v,card);
+    updateNext();
+  }else{
+    card.dataset.missed="1"; card.classList.remove("wrong"); void card.offsetWidth; card.classList.add("wrong");
+    fb.className="fb try"; fb.textContent="Good try! Hint: "+card.dataset.hint;
+  }
+}
+const canSpeak=("speechSynthesis" in window)&&typeof SpeechSynthesisUtterance!=="undefined";
+function stopSpeech(){try{if(canSpeak)speechSynthesis.cancel()}catch(e){}}
+function speak(){
+  const b=$("#say");
+  try{
+    if(speechSynthesis.speaking){stopSpeech();b.setAttribute("aria-pressed","false");return;}
+    const u=new SpeechSynthesisUtterance(scenes[cur].title+". "+scenes[cur].say);
+    const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang)); if(v)u.voice=v;
+    u.lang="en-GB"; u.rate=.85; u.onend=()=>b&&b.setAttribute("aria-pressed","false");
+    b.setAttribute("aria-pressed","true"); speechSynthesis.speak(u);
+  }catch(e){b.textContent="Sound not available";b.disabled=true;}
+}
+$("#next").addEventListener("click",()=>{if(cur<scenes.length-1){cur++;render();}});
+$("#back").addEventListener("click",()=>{if(cur>0){cur--;render();}});
+render();
+})();
+
+</script>
+</body>
+</html>
