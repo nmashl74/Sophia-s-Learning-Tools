@@ -22,6 +22,8 @@ details{color:var(--muted);font-size:.9rem;border-top:2px dashed var(--line);pad
   <div><small>Physics · 7J video</small><h1>How a circuit works</h1></div>
   <video id="v" src="how-a-circuit-works.mp4" controls playsinline preload="metadata"></video>
   <button type="button" id="say">🔊 Read the words to me</button>
+  <button type="button" id="tell" hidden>📨 Tell a grown-up I watched it</button>
+  <p id="tellfb" aria-live="polite" style="color:#23824F;font-weight:600"></p>
   <p class="tip">Watch it twice. Then try <a href="circuit-workshop.html">Circuit Workshop</a>.</p>
   <details><summary>For grown-ups</summary><p>A 41-second silent animation with short captions, covering 7Ja–7Jb (current, energy, gaps, ammeters). There is no voice in the video itself; the button reads all the captions aloud using the phone's own voice.</p></details>
 </div>
@@ -30,6 +32,18 @@ const words="How does a circuit work? One. A cell, wires, a switch and a bulb ma
 document.getElementById("say").addEventListener("click",()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(words);u.lang="en-GB";u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}});
 </script>
 <script>
-try{document.getElementById("v").addEventListener("ended",()=>{try{const L=JSON.parse(localStorage.getItem("sophia-log")||"[]");L.push({p:"how-a-circuit-works.html",t:document.title,at:new Date().toISOString(),s:""});localStorage.setItem("sophia-log",JSON.stringify(L.slice(-300)));}catch(e){}},{once:true});}catch(e){}
+(function(){
+const v=document.getElementById("v"), btn=document.getElementById("tell"), fb=document.getElementById("tellfb");
+v.addEventListener("ended",()=>{
+  try{const L=JSON.parse(localStorage.getItem("sophia-log")||"[]");L.push({p:"how-a-circuit-works.html",t:document.title,at:new Date().toISOString(),s:""});localStorage.setItem("sophia-log",JSON.stringify(L.slice(-300)));}catch(e){}
+  btn.hidden=false;
+},{once:true});
+btn.addEventListener("click",async()=>{
+  const d=new Date().toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+  const msg=`🌟 Sophia watched "${document.title}" on ${d}.`;
+  try{if(navigator.share){await navigator.share({text:msg});fb.textContent="✅ Sent! Well done.";return;}}catch(e){if(e&&e.name==="AbortError")return;}
+  try{await navigator.clipboard.writeText(msg);fb.textContent="✅ Copied! Paste it into a message to a grown-up.";}catch(e){fb.textContent=msg;}
+});
+})();
 </script>
 </body></html>
