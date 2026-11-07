@@ -157,6 +157,8 @@ details.grownup ul{padding-left:20px;margin:8px 0}
 details.reminder{border:2px dashed var(--accent);border-radius:16px;padding:10px 14px}
 details.reminder summary{cursor:pointer;font-family:var(--f-display);font-weight:600;color:var(--accent);min-height:32px}
 details.reminder[open] summary{margin-bottom:10px}
+.trail{flex-wrap:wrap;gap:4px}
+.trail li{width:28px;height:28px;font-size:.8rem}
 .scorebox{display:grid;justify-items:center;background:var(--good-soft);border:2px solid var(--good);border-radius:18px;padding:12px 28px}
 .scorebox .n{font-family:var(--f-display);font-size:2.4rem;font-weight:700;color:var(--good);line-height:1.1}
 </style>
@@ -180,8 +182,9 @@ details.reminder[open] summary{margin-bottom:10px}
     <summary>For grown-ups</summary>
     <p>A self-test on 7Ea Mixtures and separation (textbook pp.5–9): p.5 intro, Forensic science (STEM) pp.6–7 and Mixtures pp.8–9. It uses the book's bold words. Reminders are hidden behind a 💡 button, so she tries first. Wrong answers give a hint, never the answer.</p>
     <ul>
-      <li>Q1: solids, liquids, gases; dissolve. Q2: pure vs mixture; transparent vs opaque. Q3: solution, suspension, colloid. Q4: heating apparatus (beaker, gauze, tripod, Bunsen burner); sieve vs filter. Q5: filtering steps; residue; method, apparatus, results.</li>
-      <li>The finish page shows how many of 21 items she got right first time. It is not saved; note it down if you want to track progress.</li>
+      <li>Q1 solids, liquids, gases; dissolve. Q2 pure vs mixture; transparent vs opaque. Q3 soluble vs insoluble. Q4 solution, suspension, colloid. Q5 true or false on mixture types. Q6 story: solution then suspension.</li>
+      <li>Q7 heating apparatus (beaker, gauze, tripod, Bunsen burner). Q8 sieve vs filter paper. Q9 filtering steps; residue; method, apparatus, results. Q10 filtrate; dissolved salt passes through; insoluble; dispersed.</li>
+      <li>The finish page shows how many of 42 items she got right first time. It is not saved; note it down if you want to track progress.</li>
     </ul>
     <p>The plain-words meanings of suspension and colloid are ours; worth a quick check against p.9. Questions are our own, not the textbook's. Memory tricks are ours, not the school's.</p>
   </details>
@@ -254,6 +257,7 @@ const defs={
   sieve:"A mesh with holes. It catches big bits and lets small bits through.",
   filters:"Things that let a liquid through but catch tiny solid bits.",
   filtration:"Separating an insoluble solid from a liquid using filter paper.",
+  soluble:"Able to dissolve.",
   insoluble:"Will not dissolve, like sand in water.",
   residue:"The solid that stays in the filter paper.",
   filtrate:"The liquid that drips through the filter paper.",
@@ -317,7 +321,24 @@ const scenes=[
      ${qcard("q2-4","🫙","A glass of salty water. Can you see through it?",[["t","transparent"],["o","opaque"]],"t","“Trans” can mean “through”.")}
    </div>`},
 
- { tag:"Question 3", title:"Solution, suspension or colloid?",
+ { tag:"Question 3", title:"Dissolve or not?",
+   say:"Some things dissolve in water. Some things do not. Sort each one into the right basket.",
+   body:()=>`
+   ${remind([["✨",`${kw("soluble","Soluble")}: it can ${kw("dissolve")}. It seems to vanish into the water.`],["🪨",`${kw("insoluble","Insoluble")}: it will not dissolve. You can still see the bits.`]])}
+   <div class="task">
+     <div class="task-title">Stir it into water. Tap a basket.</div>
+     ${baskets({icon:"✨",label:"Dissolves",short:"Dissolves",hint:"soluble"},{icon:"🪨",label:"Doesn't dissolve",short:"Doesn't",hint:"insoluble"})}
+     <div class="cards">${[
+       ["🍬","Sugar","Sugar","a","Think of sugar stirred into tea. Can you see the grains after?"],
+       ["⏳","Sand","Sand","b","Think of the beach. Does sand vanish when the waves wash over it?"],
+       ["☕","Coffee granules","Instant coffee granules","a","Grown-ups make coffee by stirring these into hot water. Are there bits left?"],
+       ["🖍️","Chalk dust","Chalk dust","b","Chalky water stays cloudy and bits sink. Did it vanish?"],
+       ["🧂","Salt","Salt","a","Sea water tastes salty, but can you see the salt?"],
+       ["✨","Glitter","Craft glitter","b","After stirring, can you still see each sparkle?"]
+     ].map((c,i)=>sortCard(`n1-${i}`,c[0],c[1],c[2],c[3],c[4])).join("")}</div>
+   </div>`},
+
+ { tag:"Question 4", title:"Solution, suspension or colloid?",
    say:"Three kinds of mixture. Is it a solution, a suspension or a colloid? Remember: suspension settles, colloid stays cloudy.",
    body:()=>`
    ${remind([["🧂",`${kw("solution","Solution")}: dissolved. You can see through it.`],["⬇️",`${kw("suspension","Suspension")}: bits float, then sink to the bottom.`],["☁️",`${kw("colloid","Colloid")}: tiny bits ${kw("dispersed","spread out")}. They never sink.`]])}
@@ -328,8 +349,31 @@ const scenes=[
      ${qcard("q3-2","🥛","Milk. Tiny drops are spread through it and never sink.",[["sol","solution"],["sus","suspension"],["col","colloid"]],"col","It stays cloudy for ever. Use the memory trick!")}
    </div>`},
 
- { tag:"Question 4", title:"Kit check",
-   say:"Look at the heating kit. Name the parts A, B, C and D. Then help Cinderella.",
+ { tag:"Question 5", title:"True or false?",
+   say:"Read each sentence. Is it true or false? Use the memory trick if you need it.",
+   body:()=>`
+   ${remind([["🧂",`${kw("solution","Solution")}: see-through.`],["⬇️",`${kw("suspension","Suspension")}: the bits sink.`],["☁️",`${kw("colloid","Colloid")}: cloudy. The bits never sink.`]])}
+   <div class="cards">
+     ${qcard("n2-0","🧂","A solution is see-through.",[["t","True"],["f","False"]],"t","Think of salty water in a glass. Can you see through it?")}
+     ${qcard("n2-1","⬇️","In a suspension, the bits never sink.",[["t","True"],["f","False"]],"f","Remember: Suspension S…")}
+     ${qcard("n2-2","🥛","Milk is a colloid.",[["t","True"],["f","False"]],"t","Does milk stay cloudy, or do bits sink?")}
+     ${qcard("n2-3","🔦","A colloid is transparent.",[["t","True"],["f","False"]],"f","Can you see through a glass of milk?")}
+   </div>`},
+
+ { tag:"Question 6", title:"Fairy Plum's potion",
+   say:"Fairy Plum is making a potion. She stirs purple sugar crystals into water. The water turns clear purple. Answer the questions.",
+   body:()=>`
+   <div class="think">🧚 Fairy Plum stirs purple sugar crystals into water. The water turns <b>clear purple</b>.</div>
+   ${remind([["🪟",`${kw("transparent","Transparent")}: see-through, even if it has a colour.`],["✨",`${kw("soluble","Soluble")}: it can dissolve.`],["🧂",`A ${kw("solution")} is see-through. A ${kw("suspension")} has bits that sink.`]])}
+   <div class="cards">
+     ${qcard("n3-0","🔮","Can you see through the purple potion?",[["t","transparent"],["o","opaque"]],"t","It is “clear” purple. What does clear mean?")}
+     ${qcard("n3-1","💜","The purple sugar crystals are…",[["s","soluble"],["i","insoluble"]],"s","They disappeared into the water. What does that tell you?")}
+     ${qcard("n3-2","🧪","So the potion is a…",[["sol","solution"],["sus","suspension"],["col","colloid"]],"sol","It is dissolved and see-through.")}
+     ${qcard("n3-3","🐸","Oops! Frog jumps in with muddy feet. The mud slowly sinks. Mud in water is a…",[["sol","solution"],["sus","suspension"],["col","colloid"]],"sus","The bits sink. Use the memory trick!")}
+   </div>`},
+
+ { tag:"Question 7", title:"Kit check",
+   say:"Look at the heating kit. Name the parts A, B, C and D.",
    body:()=>`
    ${remind([["🧪","The beaker holds the liquid."],["🕸️","The wire gauze is a flat mesh. The beaker sits on it."],["🔥","The tripod has three legs. The Bunsen burner goes under it."]])}
    <div class="figure">${kitPic()}<span class="cap">Kit for heating a liquid.</span></div>
@@ -338,10 +382,24 @@ const scenes=[
      ${qcard("q4-1","🅱️","What is B?",kitOpts,"gauze","The flat mesh the beaker sits on.")}
      ${qcard("q4-2","©️","What is C?",kitOpts,"tripod","Count its legs. “Tri” means three.")}
      ${qcard("q4-3","🇩","What is D?",kitOpts,"bunsen","It makes the flame.")}
-     ${qcard("q4-4","👑","Cinderella must get dried peas out of a pile of flour. Fastest tool?",[["sv","a sieve"],["fp","filter paper"]],"sv",`Peas are big. Flour is fine. Which one has holes you can shake?`)}
    </div>`},
 
- { tag:"Question 5", title:"Detective Badger's case",
+ { tag:"Question 8", title:"Sieve or filter paper?",
+   say:"A sieve catches big bits. Filter paper catches tiny bits. Which would you use? Sort each job into a basket.",
+   body:()=>`
+   ${remind([["🕳️",`A ${kw("sieve")} has holes. It catches <b>big</b> bits.`],["🧻",`${kw("filters","Filters")} like filter paper catch <b>tiny</b> bits.`],["💧","Both let the rest pass through."]])}
+   <div class="task">
+     <div class="task-title">Which tool for the job? Tap a basket.</div>
+     ${baskets({icon:"🕳️",label:"Sieve",hint:"big bits"},{icon:"🧻",label:"Filter paper",hint:"tiny bits"})}
+     <div class="cards">${[
+       ["👑","Peas from flour","Cinderella must get dried peas out of flour","a","Peas are big. Flour is fine powder. Which tool lets the flour fall through?"],
+       ["🪨","Pebbles from sand","Get pebbles out of sand","a","Pebbles are big. Sand grains are small."],
+       ["🌊","Sand from sea water","Get sand out of sea water","b","Sand grains are very small. Would they fall through the holes in a sieve?"],
+       ["🐸","Mud from pond water","Get mud out of pond water","b","Mud bits are tiny. Which tool catches tiny bits?"]
+     ].map((c,i)=>sortCard(`n4-${i}`,c[0],c[1],c[2],c[3],c[4])).join("")}</div>
+   </div>`},
+
+ { tag:"Question 9", title:"Detective Badger's case",
    say:"Detective Badger found muddy water on the palace steps. She filters it to look at the mud. Put her steps in order. Then answer the questions.",
    body:()=>`
    <div class="think">🦡 Detective Badger found muddy water on the palace steps. She filters it to study the mud.</div>
@@ -355,6 +413,18 @@ const scenes=[
    </div>`,
    after:()=>initOrder("q5-order",filterSteps)},
 
+ { tag:"Question 10", title:"Badger's lab notes",
+   say:"Detective Badger looks at her results. The pond water was salty too. Answer her questions.",
+   body:()=>`
+   <div class="think">🦡 Badger looks at her results. The muddy water was <b>salty</b> too.</div>
+   ${remind([["💧",`The ${kw("filtrate")} drips through the paper.`],["🧂","Dissolved things are tiny. They pass through filter paper."],["🌬️",`${kw("dispersed","Dispersed")} means spread out all through something.`]])}
+   <div class="cards">
+     ${qcard("n5-0","💧","The clear water in the beaker is the…",[["r","residue"],["f","filtrate"]],"f","Residue Rests, Filtrate F…")}
+     ${qcard("n5-1","🧂","Is there still salt in the filtrate?",[["y","Yes"],["n","No"]],"y","Salt dissolves. Can dissolved bits slip through the paper?")}
+     ${qcard("n5-2","🟤","Mud did not dissolve. Mud is…",[["s","soluble"],["i","insoluble"]],"i","“In-” at the start can mean “not”.")}
+     ${qcard("n5-3","🌬️","Which word means “spread out all through something”?",[["d","dispersed"],["o","opaque"],["p","pure"]],"d","It starts with “dis”, like disco dancers spreading out on the floor.")}
+   </div>`},
+
  { tag:"Finish", title:"Test complete!", say:"Well done! You finished the whole test. Here are the words you used.",
    body:()=>{
      const tot=Object.keys(score).length, first=Object.values(score).filter(v=>v).length;
@@ -365,7 +435,7 @@ const scenes=[
      <div class="scorebox"><span class="n">${first} / ${tot}</span><span>right first time</span></div>
      <p>Every hint you used and fixed is learning too. 💪</p>
      <p>Tap a word to check what it means:</p>
-     <div class="wordbank">${["solids","liquid","gases","dissolve","pure","mixture","transparent","opaque","solution","suspension","colloid","sieve","filtration","residue","filtrate","method","apparatus","results"].map(w=>kw(w)).join("")}</div>
+     <div class="wordbank">${["solids","liquid","gases","dissolve","soluble","insoluble","pure","mixture","transparent","opaque","solution","suspension","colloid","dispersed","sieve","filters","filtration","residue","filtrate","method","apparatus","results"].map(w=>kw(w)).join("")}</div>
      <p style="color:var(--muted)">Tell a grown-up: what's the difference between a suspension and a colloid?</p>
    </div>`}}
 ];
