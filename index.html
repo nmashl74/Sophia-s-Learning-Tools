@@ -17,6 +17,7 @@
   --chem:#23824F; --chem-soft:#DDF3E6;
   --hist:#B07A00; --hist-soft:#F7EDD2;
   --bio:#B4446A; --bio-soft:#FBE4EC;
+  --geo:#0F7C86; --geo-soft:#DDF2F3;
   --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Lexend","Verdana",system-ui,sans-serif;
   color-scheme:light;
@@ -26,13 +27,13 @@
   --accent:#D49BE6; --accent-soft:#352A45;
   --phys:#8FB0F5; --phys-soft:#23304F;
   --chem:#6FD39B; --chem-soft:#1F3A2C;
-  --hist:#F2C552; --hist-soft:#3B3220; --bio:#F28FB1; --bio-soft:#41252F; color-scheme:dark}}
+  --hist:#F2C552; --hist-soft:#3B3220; --bio:#F28FB1; --bio-soft:#41252F; --geo:#5FD0D8; --geo-soft:#1E3A3C; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#17162A; --card:#222039; --ink:#EEEAF7; --muted:#ABA6C6; --line:#3A3656;
   --accent:#D49BE6; --accent-soft:#352A45;
   --phys:#8FB0F5; --phys-soft:#23304F;
   --chem:#6FD39B; --chem-soft:#1F3A2C;
-  --hist:#F2C552; --hist-soft:#3B3220; --bio:#F28FB1; --bio-soft:#41252F; color-scheme:dark}
+  --hist:#F2C552; --hist-soft:#3B3220; --bio:#F28FB1; --bio-soft:#41252F; --geo:#5FD0D8; --geo-soft:#1E3A3C; color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.6;letter-spacing:.02em;word-spacing:.08em}
 .wrap{max-width:640px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
@@ -51,6 +52,7 @@ h1{font-size:2rem;text-wrap:balance}
 .hist{border-color:var(--hist)} .hist .ico{background:var(--hist-soft)} .hist small,.hist .go{color:var(--hist)}
 .sec{font-size:1.2rem;margin:22px 0 10px;color:var(--muted)}
 .bio{border-color:var(--bio)} .bio .ico{background:var(--bio-soft)} .bio small,.bio .go{color:var(--bio)}
+.geo{border-color:var(--geo)} .geo .ico{background:var(--geo-soft)} .geo small,.geo .go{color:var(--geo)}
 .tip{margin-top:24px;padding:14px 16px;border:2px dashed var(--accent);border-radius:16px;font-size:.95rem}
 .done{display:inline-block;margin-top:4px;font-size:.85rem;font-weight:600;color:#1C6B40;background:#DDF3E6;border-radius:999px;padding:2px 10px}
 .log{margin-top:20px;font-size:.9rem;color:var(--muted)}
@@ -86,6 +88,7 @@ h1{font-size:2rem;text-wrap:balance}
     <li><a class="page hist" href="raiders-or-traders.html"><span class="ico" aria-hidden="true">⛵</span><span><small>History</small><h2>Raiders or Traders?</h2></span><span class="go" aria-hidden="true">→</span></a></li>
     <li><a class="page hist" href="alfred-test.html"><span class="ico" aria-hidden="true">📝</span><span><small>History · test · new</small><h2>Alfred Test</h2></span><span class="go" aria-hidden="true">→</span></a></li>
     <li><a class="page bio" href="organs-test.html"><span class="ico" aria-hidden="true">📝</span><span><small>Biology · test · new</small><h2>Organs Test</h2></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="page geo" href="settlement-quest.html"><span class="ico" aria-hidden="true">🏘️</span><span><small>Geography · now · new</small><h2>Settlement Quest</h2></span><span class="go" aria-hidden="true">→</span></a></li>
     <li><a class="page phys" href="forces-quest.html"><span class="ico" aria-hidden="true">🧲</span><span><small>Physics</small><h2>Forces Quest</h2></span><span class="go" aria-hidden="true">→</span></a></li>
     <li><a class="page chem" href="colour-detectives.html"><span class="ico" aria-hidden="true">🎨</span><span><small>Chemistry</small><h2>Colour Detectives</h2></span><span class="go" aria-hidden="true">→</span></a></li>
     <li><a class="page hist" href="crown-of-england.html"><span class="ico" aria-hidden="true">👑</span><span><small>History</small><h2>Crown of England</h2></span><span class="go" aria-hidden="true">→</span></a></li>
